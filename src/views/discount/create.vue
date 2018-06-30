@@ -51,12 +51,15 @@
 import { Utils, WxcGridSelect, WxcButton, WxcCell } from "weex-ui";
 import {
   getEntryUrl,
+  postMessage,
   receiveMessage,
   setStorageValue,
   getStorageValue,
   initIconfont,
   isEmpty,
-  getStorageVal
+  getStorageVal,
+  setStorageVal,
+  getUrlKey
 } from "../../tools/utils.js";
 import { http } from "../../tools/http.js";
 import category from "../../components/category.vue";
@@ -212,6 +215,7 @@ export default {
               duration: 1
             });
 
+            postMessage("way:tab:selectedIndex", 1);
             navigator.pop();
           },
           function(error) {

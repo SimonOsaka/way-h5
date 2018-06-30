@@ -51,10 +51,12 @@
 import { Utils, WxcButton, WxcDialog } from "weex-ui";
 import {
   getEntryUrl,
+  postMessage,
   initIconfont,
   isEmpty,
   setStorageVal,
-  modalDebug
+  modalDebug,
+  getUrlKey
 } from "../../tools/utils.js";
 import { http } from "../../tools/http.js";
 import category from "../../components/category.vue";
@@ -179,6 +181,8 @@ export default {
           ).then(
             data => {
               modalDebug("setStorageVal");
+              let tabIndex = getUrlKey("tabIndex");
+              postMessage("way:tab:selectedIndex", tabIndex ? tabIndex : 0);
               navigator.pop({
                 animated: "true"
               });

@@ -6,7 +6,7 @@ export function initIconfont() {
   })
 }
 
-export function getEntryUrl(filename) {
+export function getEntryUrl(filename, parameters) {
   const bundleUrl = weex.config.bundleUrl;
 
   // const host = /\/\/([^/]+?)\//.exec(bundleUrl)[0]
@@ -18,6 +18,17 @@ export function getEntryUrl(filename) {
   let url = ''
   if (isWeb) {
     url = `/${filename}.html`
+    if (parameters) {
+      url += '?';
+      let ps = [];
+      for (const key in parameters) {
+        if (parameters.hasOwnProperty(key)) {
+          const val = parameters[key];
+          ps.push(key + '=' + val);
+        }
+      }
+      url += ps.join('&');
+    }
   } else {
     if (isiOSAssets || isAndroidAssets) {
       url = `${bundleUrl.split('bundlejs')[0]}/bundlejs/${filename}.js`
@@ -157,4 +168,8 @@ export function modalDebug(info = '') {
       duration: 3
     });
   }
+}
+
+export function getUrlKey(name) {
+  return decodeURIComponent((new RegExp('[?|&]' + name + '=' + '([^&;]+?)(&|#|;|$)').exec(location.href) || [, ""])[1].replace(/\+/g, '%20')) || null
 }

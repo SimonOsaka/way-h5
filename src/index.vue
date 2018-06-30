@@ -1,5 +1,6 @@
 <template>
-  <wxc-tab-bar :tab-titles="tabTitles"
+  <wxc-tab-bar ref="wxc-tab-bar"
+               :tab-titles="tabTitles"
                :tab-styles="tabStyles"
                title-type="iconFont"
                duration="0"
@@ -193,105 +194,6 @@
   </wxc-tab-bar>
 </template>
 
-<style scoped>
-.iconfont {
-  font-family: iconfont;
-  font-size: 32px;
-  font-style: normal;
-}
-.item-container {
-  width: 750px;
-  background-color: #ffffff;
-  align-items: center;
-}
-.image {
-  width: 140px;
-  height: 140px;
-  margin-right: 10px;
-  border-radius: 10px;
-}
-.shop_image {
-  width: 64px;
-  height: 64px;
-  border-radius: 5px;
-}
-.avatar {
-  border-radius: 50px;
-  border-width: 1px;
-  border-style: solid;
-  border-color: #cccccc;
-}
-.m_cell {
-  padding-bottom: 2px;
-  margin-bottom: 6px;
-}
-.m_cell_split {
-  height: 10px;
-  background-color: #f2f3f4;
-}
-.c_name {
-  padding-left: 20px;
-}
-.c_money {
-  color: red;
-}
-.c_real {
-  font-size: 24px;
-}
-.red {
-  color: red;
-}
-.refresh {
-  width: 750;
-  display: -ms-flex;
-  display: -webkit-flex;
-  display: flex;
-  -ms-flex-align: center;
-  -webkit-align-items: center;
-  -webkit-box-align: center;
-  align-items: center;
-}
-.loading {
-  width: 750;
-  display: -ms-flex;
-  display: -webkit-flex;
-  display: flex;
-  -ms-flex-align: center;
-  -webkit-align-items: center;
-  -webkit-box-align: center;
-  align-items: center;
-}
-.indicator-text {
-  color: #888888;
-  font-size: 30px;
-  text-align: center;
-}
-.indicator {
-  margin-top: 16px;
-  height: 40px;
-  width: 40px;
-  color: blue;
-}
-.panel {
-  width: 600px;
-  height: 250px;
-  margin-left: 75px;
-  margin-top: 35px;
-  margin-bottom: 35px;
-  flex-direction: column;
-  justify-content: center;
-  border-width: 2px;
-  border-style: solid;
-  border-color: #dddddd;
-  background-color: #f5f5f5;
-}
-.text {
-  font-size: 50px;
-  text-align: center;
-  color: #41b883;
-}
-</style>
-
 <script>
 import { WxcSearchbar, Utils, WxcTabBar, WxcCell, WxcButton } from "weex-ui";
 import {
@@ -302,7 +204,8 @@ import {
   getStorageValue,
   initIconfont,
   modalDebug,
-  getStorageVal
+  getStorageVal,
+  setStorageVal
 } from "./tools/utils.js";
 import tabbarConfig from "./entry/tabbar/config.js";
 import { http } from "./tools/http.js";
@@ -340,21 +243,24 @@ export default {
       pageSize: 20
     }
   }),
-  mounted() {
-    getStorageVal("way:user").then(
-      data => {
-        let user = JSON.parse(data);
-        this.my.nickname = user.userNickName;
-        this.my.userLoginId = user.userLoginId;
-      },
-      error => {}
-    );
-  },
-  beforeCreate() {
+  created() {
     initIconfont();
     initAllCateImg();
-  },
-  created() {
+    // getStorageVal("way:tab:selectedIndex").then(
+    //   index => {
+    //     this.switchTabContent(index);
+    //     this.$refs["wxc-tab-bar"].setPage(index);
+    //   },
+    //   error => {}
+    // );
+    receiveMessage("way:tab:selectedIndex", data => {
+      console.log("接收消息selectedIndex", data);
+      if (data.val) {
+        let index = data.val;
+        this.switchTabContent(index);
+        this.$refs["wxc-tab-bar"].setPage(index);
+      }
+    });
     getStorageVal("way:city").then(
       data => {
         let cityObj = JSON.parse(data);
@@ -415,17 +321,47 @@ export default {
     );
   },
   methods: {
-    storageCurrentCity(city) {
-      setStorageValue("city:name", city);
-    },
     wxcTabBarCurrentTabSelected(e) {
       const index = e.page;
       console.log(index);
-      if (index === 1) {
+      this.switchTabContent(index);
+    },
+    switchTabContent(index) {
+      console.log("switch to index ", index);
+      if (index == 1) {
+        this.loadDiscountTabContent();
+      } else if (index == 2) {
+        console.log("into my tab");
+        this.loadMyTabContent();
+      }
+    },
+    loadDiscountTabContent() {
+      if (
+        !this.discountTabContentInitTime ||
+        this.discountTabContentInitTime < new Date().getTime()
+      ) {
+        this.discountTabContentInitTime = new Date(
+          new Date().getTime() + 3600 * 1000
+        ).getTime();
+
         this.discountList.splice(0, this.discountList.length);
         this.discountPageNum = 1;
         this.fetchDiscount();
       }
+    },
+    loadMyTabContent() {
+      console.log("加载my tab");
+      getStorageVal("way:user").then(
+        data => {
+          let user = JSON.parse(data);
+          console.log("加载my tab后", user);
+          this.my.nickname = user.userNickName;
+          this.my.userLoginId = user.userLoginId;
+        },
+        error => {
+          this.my.userLoginId = 0;
+        }
+      );
     },
     wxcSearchbarDepChooseClicked() {
       navigator.push({
@@ -542,21 +478,16 @@ export default {
           if (data.code != 200) {
             return;
           }
-          _this.my.userLoginId = 0;
-          storage.getAllKeys(event => {
-            if (event.result === "success") {
-              event.data.forEach(key => {
-                if (key.indexOf("way:") != -1) {
-                  storage.removeItem(key, event => {});
-                }
-              });
-            }
-          });
+          storage.removeItem("way:user", event => {});
 
-          navigator.push({
-            url: getEntryUrl("index"),
-            animated: "true"
-          });
+          postMessage("way:tab:selectedIndex", 2);
+          _this.my.userLoginId = 0;
+          location.reload();
+          // navigator.pop({ animated: "true" });
+          // navigator.push({
+          //   url: getEntryUrl("views/user/login"),
+          //   animated: "true"
+          // });
         },
         function(error) {
           console.error("failure", error);
@@ -565,7 +496,7 @@ export default {
     },
     loginClicked(e) {
       navigator.push({
-        url: getEntryUrl("views/user/login"),
+        url: getEntryUrl("views/user/login", { tabIndex: 2 }),
         animated: "true"
       });
     },
@@ -591,7 +522,7 @@ export default {
         },
         error => {
           navigator.push({
-            url: getEntryUrl("views/user/login"),
+            url: getEntryUrl("views/user/login", { tabIndex: 1 }),
             animated: "true"
           });
         }
@@ -720,3 +651,102 @@ export default {
   }
 };
 </script>
+
+<style scoped>
+.iconfont {
+  font-family: iconfont;
+  font-size: 32px;
+  font-style: normal;
+}
+.item-container {
+  width: 750px;
+  background-color: #ffffff;
+  align-items: center;
+}
+.image {
+  width: 140px;
+  height: 140px;
+  margin-right: 10px;
+  border-radius: 10px;
+}
+.shop_image {
+  width: 64px;
+  height: 64px;
+  border-radius: 5px;
+}
+.avatar {
+  border-radius: 50px;
+  border-width: 1px;
+  border-style: solid;
+  border-color: #cccccc;
+}
+.m_cell {
+  padding-bottom: 2px;
+  margin-bottom: 6px;
+}
+.m_cell_split {
+  height: 10px;
+  background-color: #f2f3f4;
+}
+.c_name {
+  padding-left: 20px;
+}
+.c_money {
+  color: red;
+}
+.c_real {
+  font-size: 24px;
+}
+.red {
+  color: red;
+}
+.refresh {
+  width: 750;
+  display: -ms-flex;
+  display: -webkit-flex;
+  display: flex;
+  -ms-flex-align: center;
+  -webkit-align-items: center;
+  -webkit-box-align: center;
+  align-items: center;
+}
+.loading {
+  width: 750;
+  display: -ms-flex;
+  display: -webkit-flex;
+  display: flex;
+  -ms-flex-align: center;
+  -webkit-align-items: center;
+  -webkit-box-align: center;
+  align-items: center;
+}
+.indicator-text {
+  color: #888888;
+  font-size: 30px;
+  text-align: center;
+}
+.indicator {
+  margin-top: 16px;
+  height: 40px;
+  width: 40px;
+  color: blue;
+}
+.panel {
+  width: 600px;
+  height: 250px;
+  margin-left: 75px;
+  margin-top: 35px;
+  margin-bottom: 35px;
+  flex-direction: column;
+  justify-content: center;
+  border-width: 2px;
+  border-style: solid;
+  border-color: #dddddd;
+  background-color: #f5f5f5;
+}
+.text {
+  font-size: 50px;
+  text-align: center;
+  color: #41b883;
+}
+</style>
