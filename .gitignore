@@ -1,0 +1,6 @@
+/dist/
+/.temp/
+/.vscode/
+/node_modules/
+/release/
+/platforms/ios
