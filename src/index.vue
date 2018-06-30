@@ -1,196 +1,196 @@
 <template>
-    <wxc-tab-bar :tab-titles="tabTitles"
-                 :tab-styles="tabStyles"
-                 title-type="iconFont"
-                 duration="0"
-                 @wxcTabBarCurrentTabSelected="wxcTabBarCurrentTabSelected">
-        <div class="item-container"
-             :style="contentStyle">
-            <wxc-searchbar class="searchbar"
-                           placeholder="输入商品名称"
-                           theme="gray"
-                           mod="hasDep"
-                           :dep-name="city"
-                           @wxcSearchbarInputReturned="wxcSearchbarInputOnInput"
-                           @wxcSearchbarDepChooseClicked="wxcSearchbarDepChooseClicked"></wxc-searchbar>
-            <scroller :style="mcScrollerStyle"
-                      @loadmore="fetchMc"
-                      loadmoreoffset="10">
-                <div class="m_cell"
-                     v-for="(commodityObj, i) in main.queryList">
-                    <div class="m_cell_split"
-                         v-if="i != 0"></div>
-                    <wxc-cell :cell-style="cellStyle"
-                              :has-top-border="false"
-                              :has-bottom-border="true"
-                              :has-margin="false">
-                        <image slot="label"
-                               class="shop_image"
-                               :src="commodityObj.shopLogoUrl"></image>
-                        <text slot="title"
-                              style="margin-left: 10px;">{{commodityObj.mName}}</text>
-                        <text slot="value"
-                              style="text-align: right;">{{commodityObj.mDistance}}</text>
-                    </wxc-cell>
-                    <wxc-cell v-for="(cItem, j) in commodityObj.firstList"
-                              :key="cItem.cId"
-                              :has-arrow="false"
-                              :cell-style="cellStyle"
-                              :has-top-border="false"
-                              :has-bottom-border="true"
-                              :has-margin="false"
-                              :auto-accessible="false"
-                              @wxcCellClicked="commodityCellClick(i, j)">
-                        <image slot="label"
-                               class="image"
-                               :src="cItem.cImgUrl"></image>
-                        <div slot="title">
-                            <text class="c_name">{{cItem.cName}}</text>
-                            <div style="flex-direction:row;">
-                                <text class="c_name c_money"
-                                      style="font-size:20px; padding-top:10px;">¥</text>
-                                <text class="c_money">{{cItem.cPrice}}</text>
-                            </div>
-                        </div>
-                    </wxc-cell>
-                    <wxc-cell v-if="commodityObj.moreList.length > 0"
-                              :has-arrow="false"
-                              :has-top-border="false"
-                              :has-bottom-border="true"
-                              :has-margin="false"
-                              :auto-accessible="false">
-                        <text slot="title"
-                              class="iconfont"
-                              style="text-align: center;"
-                              v-if="commodityObj.isMore == true"
-                              @click="moreCommodityClicked(commodityObj.shopIndex)"> 查看更多{{commodityObj.moreList.length}}个 &#xe661 </text>
-                        <text slot="title"
-                              class="iconfont"
-                              style="text-align: center;"
-                              v-else
-                              @click="unMoreCommodityClicked(commodityObj.shopIndex)"> 收起 &#xe6de </text>
-                    </wxc-cell>
-                </div>
-            </scroller>
-        </div>
-        <div class="item-container"
-             :style="contentStyle">
-            <scroller :style="discountScrollerStyle"
-                      @loadmore="fetchDiscount"
-                      loadmoreoffset="10"
-                      @scroll="discountScrollHandler">
-                <div class="m_cell"
-                     v-for="(discountObj, i) in discountList"
-                     :key="i"
-                     :ref="'cell'+i">
-                    <div class="m_cell_split"
-                         v-if="i != 0"></div>
-                    <wxc-cell @wxcCellClicked="discountCellClicked(i)"
-                              :has-arrow="false"
-                              :cell-style="cellStyle"
-                              :has-top-border="false"
-                              :has-bottom-border="false"
-                              :has-margin="false"
-                              :auto-accessible="false">
-                        <image slot="label"
-                               class="image"
-                               v-if="!discountObj.cPicUrl"
-                               src="data:image/png;base64,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"></image>
-                        <image slot="label"
-                               class="image"
-                               v-else
-                               :src="discountObj.cPicUrl"></image>
-                        <div slot="title">
-                            <div style="flex-direction: row;">
-                                <text class="c_name">{{discountObj.cName}}</text>
-                                <div style="flex: 1 1 0%; -webkit-box-flex: 1;">
-                                    <text style="text-align: right; font-size: 26px; padding-top: 10px;">{{discountObj.mDistance}}</text>
-                                </div>
-                            </div>
-                            <div style="flex-direction:row; padding-top: 10px;">
-                                <text class="c_name c_money"
-                                      style="font-size:20px; padding-top:10px;">¥</text>
-                                <text class="c_money">{{discountObj.cPrice}}</text>
-                            </div>
-                            <div :key="i"
-                                 :index="i"
-                                 style="flex-direction:row; padding-left: 20px; padding-top: 20px;">
-                                <div style="flex-direction:row;flex: 1 1 0%;"
-                                     @click="clickReal(i)">
-                                    <text class="iconfont"
-                                          style="color: #ccc;">&#xe644;</text>
-                                    <text class="c_real"
-                                          style="color: #ccc;">真实({{discountObj.cReal}})</text>
-                                </div>
-                                <div style="flex-direction:row;flex: 2 1 0%;">
-                                    <text class="iconfont red">&#xe651;</text>
-                                    <text class="c_real"
-                                          style="color: #ccc;">{{discountObj.position}}</text>
-                                </div>
-                            </div>
-                        </div>
-                    </wxc-cell>
-                </div>
-            </scroller>
-            <div style="flex-direction: column; position: absolute; right: 16px; bottom: 16px;">
-                <text class="iconfont"
-                      :style="addDiscountStyle"
-                      @click="discountCreate">&#xe649;</text>
-                <text class="iconfont"
-                      :style="discountTopStyle"
-                      @click="discountScrollToTop">&#xe69e;</text>
+  <wxc-tab-bar :tab-titles="tabTitles"
+               :tab-styles="tabStyles"
+               title-type="iconFont"
+               duration="0"
+               @wxcTabBarCurrentTabSelected="wxcTabBarCurrentTabSelected">
+    <div class="item-container"
+         :style="contentStyle">
+      <wxc-searchbar class="searchbar"
+                     placeholder="输入商品名称"
+                     theme="gray"
+                     mod="hasDep"
+                     :dep-name="city"
+                     @wxcSearchbarInputReturned="wxcSearchbarInputOnInput"
+                     @wxcSearchbarDepChooseClicked="wxcSearchbarDepChooseClicked"></wxc-searchbar>
+      <scroller :style="mcScrollerStyle"
+                @loadmore="fetchMc"
+                loadmoreoffset="10">
+        <div class="m_cell"
+             v-for="(commodityObj, i) in main.queryList">
+          <div class="m_cell_split"
+               v-if="i != 0"></div>
+          <wxc-cell :cell-style="cellStyle"
+                    :has-top-border="false"
+                    :has-bottom-border="true"
+                    :has-margin="false">
+            <image slot="label"
+                   class="shop_image"
+                   :src="commodityObj.shopLogoUrl"></image>
+            <text slot="title"
+                  style="margin-left: 10px;">{{commodityObj.mName}}</text>
+            <text slot="value"
+                  style="text-align: right;">{{commodityObj.mDistance}}</text>
+          </wxc-cell>
+          <wxc-cell v-for="(cItem, j) in commodityObj.firstList"
+                    :key="cItem.cId"
+                    :has-arrow="false"
+                    :cell-style="cellStyle"
+                    :has-top-border="false"
+                    :has-bottom-border="true"
+                    :has-margin="false"
+                    :auto-accessible="false"
+                    @wxcCellClicked="commodityCellClick(i, j)">
+            <image slot="label"
+                   class="image"
+                   :src="cItem.cImgUrl"></image>
+            <div slot="title">
+              <text class="c_name">{{cItem.cName}}</text>
+              <div style="flex-direction:row;">
+                <text class="c_name c_money"
+                      style="font-size:20px; padding-top:10px;">¥</text>
+                <text class="c_money">{{cItem.cPrice}}</text>
+              </div>
             </div>
+          </wxc-cell>
+          <wxc-cell v-if="commodityObj.moreList.length > 0"
+                    :has-arrow="false"
+                    :has-top-border="false"
+                    :has-bottom-border="true"
+                    :has-margin="false"
+                    :auto-accessible="false">
+            <text slot="title"
+                  class="iconfont"
+                  style="text-align: center;"
+                  v-if="commodityObj.isMore == true"
+                  @click="moreCommodityClicked(commodityObj.shopIndex)"> 查看更多{{commodityObj.moreList.length}}个 &#xe661 </text>
+            <text slot="title"
+                  class="iconfont"
+                  style="text-align: center;"
+                  v-else
+                  @click="unMoreCommodityClicked(commodityObj.shopIndex)"> 收起 &#xe6de </text>
+          </wxc-cell>
         </div>
-        <div class="item-container"
-             :style="contentStyle">
-            <scroller :style="myScrollerStyle">
-                <wxc-cell v-if="my.userLoginId != 0"
-                          :has-arrow="false"
-                          :cell-style="cellStyle"
-                          :has-top-border="false"
-                          :has-bottom-border="true"
-                          :has-margin="false"
-                          :auto-accessible="false">
-                    <image slot="label"
-                           class="image avatar"
-                           src="data:image/png;base64,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"></image>
-                    <div slot="title">
-                        <div style="flex-direction: row;">
-                            <text class="c_name">{{my.nickname}}</text>
-                        </div>
-                    </div>
-                </wxc-cell>
-
-                <wxc-cell v-else
-                          :has-arrow="false"
-                          :cell-style="cellStyle"
-                          :has-top-border="false"
-                          :has-bottom-border="true"
-                          :has-margin="false"
-                          :auto-accessible="false">
-                    <div slot="title">
-                        <wxc-button type="blue"
-                                    text="登录"
-                                    @wxcButtonClicked="loginClicked"></wxc-button>
-                    </div>
-                </wxc-cell>
-
-                <wxc-cell v-if="my.userLoginId != 0"
-                          :has-arrow="false"
-                          :cell-style="cellStyle"
-                          :has-top-border="false"
-                          :has-bottom-border="false"
-                          :has-margin="false"
-                          :auto-accessible="false">
-                    <div slot="title">
-                        <wxc-button type="red"
-                                    text="退出登录"
-                                    @wxcButtonClicked="logoutClicked"></wxc-button>
-                    </div>
-                </wxc-cell>
-            </scroller>
+      </scroller>
+    </div>
+    <div class="item-container"
+         :style="contentStyle">
+      <scroller :style="discountScrollerStyle"
+                @loadmore="fetchDiscount"
+                loadmoreoffset="10"
+                @scroll="discountScrollHandler">
+        <div class="m_cell"
+             v-for="(discountObj, i) in discountList"
+             :key="i"
+             :ref="'cell'+i">
+          <div class="m_cell_split"
+               v-if="i != 0"></div>
+          <wxc-cell @wxcCellClicked="discountCellClicked(i)"
+                    :has-arrow="false"
+                    :cell-style="cellStyle"
+                    :has-top-border="false"
+                    :has-bottom-border="false"
+                    :has-margin="false"
+                    :auto-accessible="false">
+            <image slot="label"
+                   class="image"
+                   v-if="!discountObj.cPicUrl"
+                   src="data:image/png;base64,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"></image>
+            <image slot="label"
+                   class="image"
+                   v-else
+                   :src="discountObj.cPicUrl"></image>
+            <div slot="title">
+              <div style="flex-direction: row;">
+                <text class="c_name">{{discountObj.cName}}</text>
+                <div style="flex: 1 1 0%; -webkit-box-flex: 1;">
+                  <text style="text-align: right; font-size: 26px; padding-top: 10px;">{{discountObj.mDistance}}</text>
+                </div>
+              </div>
+              <div style="flex-direction:row; padding-top: 10px;">
+                <text class="c_name c_money"
+                      style="font-size:20px; padding-top:10px;">¥</text>
+                <text class="c_money">{{discountObj.cPrice}}</text>
+              </div>
+              <div :key="i"
+                   :index="i"
+                   style="flex-direction:row; padding-left: 20px; padding-top: 20px;">
+                <div style="flex-direction:row;flex: 1 1 0%;"
+                     @click="clickReal(i)">
+                  <text class="iconfont"
+                        style="color: #ccc;">&#xe644;</text>
+                  <text class="c_real"
+                        style="color: #ccc;">真实({{discountObj.cReal}})</text>
+                </div>
+                <div style="flex-direction:row;flex: 2 1 0%;">
+                  <text class="iconfont red">&#xe651;</text>
+                  <text class="c_real"
+                        style="color: #ccc;">{{discountObj.position}}</text>
+                </div>
+              </div>
+            </div>
+          </wxc-cell>
         </div>
-    </wxc-tab-bar>
+      </scroller>
+      <div style="flex-direction: column; position: absolute; right: 16px; bottom: 16px;">
+        <text class="iconfont"
+              :style="addDiscountStyle"
+              @click="discountCreate">&#xe649;</text>
+        <text class="iconfont"
+              :style="discountTopStyle"
+              @click="discountScrollToTop">&#xe69e;</text>
+      </div>
+    </div>
+    <div class="item-container"
+         :style="contentStyle">
+      <scroller :style="myScrollerStyle">
+        <wxc-cell v-if="my.userLoginId != 0"
+                  :has-arrow="false"
+                  :cell-style="cellStyle"
+                  :has-top-border="false"
+                  :has-bottom-border="true"
+                  :has-margin="false"
+                  :auto-accessible="false">
+          <image slot="label"
+                 class="image avatar"
+                 src="data:image/png;base64,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"></image>
+          <div slot="title">
+            <div style="flex-direction: row;">
+              <text class="c_name">{{my.nickname}}</text>
+            </div>
+          </div>
+        </wxc-cell>
+
+        <wxc-cell v-else
+                  :has-arrow="false"
+                  :cell-style="cellStyle"
+                  :has-top-border="false"
+                  :has-bottom-border="true"
+                  :has-margin="false"
+                  :auto-accessible="false">
+          <div slot="title">
+            <wxc-button type="blue"
+                        text="登录"
+                        @wxcButtonClicked="loginClicked"></wxc-button>
+          </div>
+        </wxc-cell>
+
+        <wxc-cell v-if="my.userLoginId != 0"
+                  :has-arrow="false"
+                  :cell-style="cellStyle"
+                  :has-top-border="false"
+                  :has-bottom-border="false"
+                  :has-margin="false"
+                  :auto-accessible="false">
+          <div slot="title">
+            <wxc-button type="red"
+                        text="退出登录"
+                        @wxcButtonClicked="logoutClicked"></wxc-button>
+          </div>
+        </wxc-cell>
+      </scroller>
+    </div>
+  </wxc-tab-bar>
 </template>
 
 <style scoped>
@@ -347,12 +347,7 @@ export default {
         this.my.nickname = user.userNickName;
         this.my.userLoginId = user.userLoginId;
       },
-      error => {
-        navigator.push({
-          url: getEntryUrl("views/user/login"),
-          animated: "true"
-        });
-      }
+      error => {}
     );
   },
   beforeCreate() {
@@ -559,7 +554,7 @@ export default {
           });
 
           navigator.push({
-            url: getEntryUrl("views/user/login"),
+            url: getEntryUrl("index"),
             animated: "true"
           });
         },
@@ -587,10 +582,20 @@ export default {
       dom.scrollToElement(el, {});
     },
     discountCreate() {
-      navigator.push({
-        url: getEntryUrl("views/discount/create"),
-        animated: "true"
-      });
+      getStorageVal("way:user").then(
+        data => {
+          navigator.push({
+            url: getEntryUrl("views/discount/create"),
+            animated: "true"
+          });
+        },
+        error => {
+          navigator.push({
+            url: getEntryUrl("views/user/login"),
+            animated: "true"
+          });
+        }
+      );
     },
     discountScrollHandler(e) {
       console.log(e.contentOffset.y);
