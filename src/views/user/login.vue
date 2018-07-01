@@ -103,10 +103,10 @@ export default {
 
       let _this = this;
       http({
-        method: "GET",
+        method: "POST",
         url: "/user/validCode",
         headers: {},
-        params: {
+        body: {
           userTel: this.userTel
         }
       }).then(

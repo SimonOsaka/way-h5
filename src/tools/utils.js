@@ -2,7 +2,7 @@ export function initIconfont() {
   let domModule = weex.requireModule('dom')
   domModule.addRule('fontFace', {
     'fontFamily': 'iconfont',
-    'src': "url('//at.alicdn.com/t/font_707137_jexsupfxb4.ttf')"
+    'src': "url('//at.alicdn.com/t/font_707137_eyaatzxc4ql.ttf')"
   })
 }
 

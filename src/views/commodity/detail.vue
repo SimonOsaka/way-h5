@@ -3,6 +3,7 @@
     <scroller class="scroller">
       <div>
         <image class="image"
+               resize="cover"
                :src="commodityObj.cPicUrl"></image>
       </div>
       <div style="margin-top: 10px;">
@@ -46,6 +47,7 @@
                   :has-bottom-border="true"
                   @wxcCellClicked="shopCellClicked">
           <image slot="label"
+                 resize="cover"
                  style="width: 64px; height: 64px;"
                  :src="commodityObj.shopLogoUrl"></image>
           <text slot="title"

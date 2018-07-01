@@ -27,11 +27,12 @@
                     :has-margin="false">
             <image slot="label"
                    class="shop_image"
+                   resize="cover"
                    :src="commodityObj.shopLogoUrl"></image>
             <text slot="title"
                   style="margin-left: 10px;">{{commodityObj.mName}}</text>
             <text slot="value"
-                  style="text-align: right;">{{commodityObj.mDistance}}</text>
+                  style="text-align: right; font-size: 26px;">{{commodityObj.mDistance}}</text>
           </wxc-cell>
           <wxc-cell v-for="(cItem, j) in commodityObj.firstList"
                     :key="cItem.cId"
@@ -44,6 +45,7 @@
                     @wxcCellClicked="commodityCellClick(i, j)">
             <image slot="label"
                    class="image"
+                   resize="cover"
                    :src="cItem.cImgUrl"></image>
             <div slot="title">
               <text class="c_name">{{cItem.cName}}</text>
@@ -95,12 +97,34 @@
                     :auto-accessible="false">
             <image slot="label"
                    class="image"
-                   v-if="!discountObj.cPicUrl"
-                   src="data:image/png;base64,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"></image>
+                   resize="cover"
+                   src="http://h5.way.com/images/clothes.jpg"
+                   v-if="discountObj.cCate == '服装'">/</image>
             <image slot="label"
                    class="image"
-                   v-else
-                   :src="discountObj.cPicUrl"></image>
+                   resize="cover"
+                   src="http://h5.way.com/images/vegetables.jpg"
+                   v-else-if="discountObj.cCate == '蔬菜'"></image>
+            <image slot="label"
+                   class="image"
+                   resize="cover"
+                   src="http://h5.way.com/images/drinks.jpg"
+                   v-else-if="discountObj.cCate == '饮料'"></image>
+            <image slot="label"
+                   class="image"
+                   resize="cover"
+                   src="http://h5.way.com/images/snacks.jpg"
+                   v-else-if="discountObj.cCate == '零食'"></image>
+            <image slot="label"
+                   class="image"
+                   resize="cover"
+                   src="http://h5.way.com/images/tools.jpg"
+                   v-else-if="discountObj.cCate == '工具'"></image>
+            <image slot="label"
+                   class="image"
+                   resize="cover"
+                   src="http://h5.way.com/images/others.jpg"
+                   v-else="discountObj.cCate == '其它'"></image>
             <div slot="title">
               <div style="flex-direction: row;">
                 <text class="c_name">{{discountObj.cName}}</text>
@@ -121,7 +145,7 @@
                   <text class="iconfont"
                         style="color: #ccc;">&#xe644;</text>
                   <text class="c_real"
-                        style="color: #ccc;">真实({{discountObj.cReal}})</text>
+                        style="color: #ccc;">({{discountObj.cReal}})</text>
                 </div>
                 <div style="flex-direction:row;flex: 2 1 0%;">
                   <text class="iconfont red">&#xe651;</text>
@@ -209,12 +233,10 @@ import {
 } from "./tools/utils.js";
 import tabbarConfig from "./entry/tabbar/config.js";
 import { http } from "./tools/http.js";
-import { loadCateImageUrl, initAllCateImg } from "./tools/image.js";
 const navigator = weex.requireModule("navigator");
 const storage = weex.requireModule("storage");
 const modal = weex.requireModule("modal");
 const dom = weex.requireModule("dom");
-const LOADMORE_COUNT = 4;
 
 export default {
   components: { WxcSearchbar, WxcTabBar, WxcCell, WxcButton },
@@ -245,7 +267,6 @@ export default {
   }),
   created() {
     initIconfont();
-    initAllCateImg();
     // getStorageVal("way:tab:selectedIndex").then(
     //   index => {
     //     this.switchTabContent(index);
@@ -421,17 +442,10 @@ export default {
               cPrice: discountData.commodityPrice,
               mDistance: discountData.shopDistance,
               cReal: discountData.commodityReal,
+              cCate: discountData.commodityCate,
               cPicUrl: ""
             };
-            loadCateImageUrl("way:discount:" + discountData.commodityCate).then(
-              imgUrl => {
-                discountObj.cPicUrl = imgUrl;
-                _this.discountList.push(discountObj);
-              },
-              failure => {
-                _this.discountList.push(discountObj);
-              }
-            );
+            _this.discountList.push(discountObj);
           }
         },
         error => {

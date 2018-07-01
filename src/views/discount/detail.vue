@@ -3,7 +3,29 @@
     <scroller class="scroller">
       <div>
         <image class="image"
-               :src="discountObj.cPicUrl"></image>
+               resize="cover"
+               src="http://h5.way.com/images/clothes.jpg"
+               v-if="discountObj.cCate == '服装'">/</image>
+        <image class="image"
+               resize="cover"
+               src="http://h5.way.com/images/vegetables.jpg"
+               v-else-if="discountObj.cCate == '蔬菜'"></image>
+        <image class="image"
+               resize="cover"
+               src="http://h5.way.com/images/drinks.jpg"
+               v-else-if="discountObj.cCate == '饮料'"></image>
+        <image class="image"
+               resize="cover"
+               src="http://h5.way.com/images/snacks.jpg"
+               v-else-if="discountObj.cCate == '零食'"></image>
+        <image class="image"
+               resize="cover"
+               src="http://h5.way.com/images/tools.jpg"
+               v-else-if="discountObj.cCate == '工具'"></image>
+        <image class="image"
+               resize="cover"
+               src="http://h5.way.com/images/others.jpg"
+               v-else="discountObj.cCate == '其它'"></image>
       </div>
       <div>
         <wxc-cell :has-arrow="false"
@@ -147,11 +169,7 @@ export default {
           _this.discountObj.cName = discountDetail.commodityName;
           _this.discountObj.cPrice = discountDetail.commodityPrice;
           _this.discountObj.position = discountDetail.shopPosition;
-          loadCateImageUrl("way:discount:" + discountDetail.commodityCate).then(
-            imgUrl => {
-              _this.discountObj.cPicUrl = imgUrl;
-            }
-          );
+          _this.discountObj.cCate = discountDetail.commodityCate;
         },
         function(error) {
           console.error("failure", error);

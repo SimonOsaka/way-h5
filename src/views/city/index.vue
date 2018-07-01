@@ -20,7 +20,6 @@
 
 <script>
 import { WxcSearchbar, WxcCell } from "weex-ui";
-import { dataList } from "../../city/data.js";
 import { postMessage } from "../../tools/utils.js";
 import { http } from "../../tools/http.js";
 const navigator = weex.requireModule("navigator");
