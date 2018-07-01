@@ -6,32 +6,44 @@
                      :always-show-cancel="alwaysShowCancel"
                      :return-key-type="returnKeyType"
                      @wxcSearchbarInputReturned="wxcSearchbarInputOnInput"></wxc-searchbar>
-      <wxc-cell v-for="(result, i) in searchList"
-                :key="i"
-                :title="result.addressTitle"
-                :desc="result.addressDesc"
-                @wxcCellClicked="wxcIndexlistItemClicked(i)"
-                :has-arrow="false"
-                :has-top-border="true">
-      </wxc-cell>
+      <div v-if="currentAddress != ''">
+        <category title="当前地址"></category>
+        <wxc-cell :title="currentAddress"
+                  :has-arrow="false"
+                  :has-top-border="true">
+        </wxc-cell>
+      </div>
+      <div v-if="searchList.length > 0">
+        <category title="搜索地址"></category>
+        <wxc-cell v-for="(result, i) in searchList"
+                  :key="i"
+                  :title="result.addressTitle"
+                  :desc="result.addressDesc"
+                  @wxcCellClicked="wxcIndexlistItemClicked(i)"
+                  :has-arrow="false"
+                  :has-top-border="true">
+        </wxc-cell>
+      </div>
     </scroller>
   </div>
 </template>
 
 <script>
 import { WxcSearchbar, WxcCell } from "weex-ui";
-import { postMessage } from "../../tools/utils.js";
+import { postMessage, getStorageVal } from "../../tools/utils.js";
 import { http } from "../../tools/http.js";
+import category from "../../components/category.vue";
 const navigator = weex.requireModule("navigator");
 
 export default {
-  components: { WxcSearchbar, WxcCell },
+  components: { WxcSearchbar, WxcCell, category },
   data: () => ({
     searchList: [],
     keywords: "",
     alwaysShowCancel: false,
     returnKeyType: "done",
-    inputTimeout: null
+    inputTimeout: null,
+    currentAddress: ""
   }),
   methods: {
     wxcIndexlistItemClicked(i) {
@@ -85,6 +97,15 @@ export default {
       );
     }
   },
-  created() {}
+  created() {
+    let _this = this;
+    getStorageVal("way:city").then(
+      data => {
+        let city = JSON.parse(data);
+        _this.currentAddress = city.name;
+      },
+      error => {}
+    );
+  }
 };
 </script>
