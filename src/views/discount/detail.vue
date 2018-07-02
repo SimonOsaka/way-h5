@@ -103,7 +103,7 @@ const modal = weex.requireModule("modal");
 export default {
   components: { WxcCell, WxcPopup, WxcDialog },
   data: () => ({
-    cellStyle: { height: "150px" },
+    cellStyle: { height: "auto" },
     discountObj: {
       id: 0,
       cPicUrl: "",

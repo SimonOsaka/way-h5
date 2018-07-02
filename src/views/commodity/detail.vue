@@ -11,7 +11,7 @@
                   :has-bottom-border="true"
                   :cell-style="cellStyle">
           <div slot="label"
-               style="height: 150px;">
+               style="height: auto;">
             <div style="flex-direction: row;">
               <text style="width: 600px;">{{commodityObj.cName}}</text>
             </div>
@@ -95,7 +95,7 @@ const modal = weex.requireModule("modal");
 export default {
   components: { WxcCell, WxcPopup, WxcDialog },
   data: () => ({
-    cellStyle: { height: "150px" },
+    cellStyle: { height: "auto" },
     commodityObj: {
       id: 0,
       cPicUrl: "",

@@ -490,10 +490,6 @@ export default {
         }
 
         _this.discountList[i].cReal = parseInt(_this.discountList[i].cReal) + 1;
-        modal.toast({
-          message: "好",
-          duration: 0.5
-        });
       });
     },
     logoutClicked(e) {
