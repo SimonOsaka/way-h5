@@ -2,7 +2,6 @@
   <div>
     <scroller class="scroller">
       <category title="商品分类"></category>
-
       <div class="content">
         <wxc-grid-select :single="true"
                          :list="cateData"
@@ -37,7 +36,16 @@
           <text style="color: #cccccc;">{{tip.district}}</text>
         </div>
       </div>
-      <div style="align-items:center;">
+
+      <category title="优惠时间"></category>
+      <div class="content">
+        <wxc-grid-select :single="true"
+                         :list="expireList"
+                         @select="params => expireOnSelect('expire', params)">
+        </wxc-grid-select>
+      </div>
+
+      <div style="align-items:center; padding-top: 20px;">
         <wxc-button type="white"
                     text="发布"
                     @wxcButtonClicked="createDiscountClicked"></wxc-button>
@@ -73,43 +81,27 @@ export default {
     commodityPrice: "",
     shopPosition: "",
     commodityCate: "",
-    cateData: [],
+    cateData: [
+      { title: "服装" },
+      { title: "蔬菜" },
+      { title: "饮料" },
+      { title: "零食" },
+      { title: "工具" },
+      { title: "其它" }
+    ],
     cateAll: {},
     clientLng: 0,
     clientLat: 0,
-    inputTipsList: []
+    inputTipsList: [],
+    expireList: [
+      { title: "一天", checked: true, day: 1 },
+      { title: "三天", day: 3 },
+      { title: "一星期", day: 7 }
+    ],
+    expireDays: 1
   }),
   beforeCreate() {
     initIconfont();
-
-    getStorageVal("way:user:id");
-
-    let _this = this;
-    http({
-      method: "GET",
-      url: "/discount/cate/all",
-      headers: {},
-      params: {}
-    }).then(
-      function(data) {
-        console.log("success", data);
-        if (data.code != 200) {
-          return;
-        }
-
-        _this.cateVersion = data.data.cateVersion;
-        _this.cateAll = data.data.commodityCateMap;
-        for (const key in _this.cateAll) {
-          if (_this.cateAll.hasOwnProperty(key)) {
-            const element = _this.cateAll[key];
-            _this.cateData.push({ title: key });
-          }
-        }
-      },
-      function(error) {
-        console.error("failure", error);
-      }
-    );
   },
   methods: {
     onSelect(res, { selectIndex, checked, checkedList }) {
@@ -117,6 +109,13 @@ export default {
       if (checked) {
         console.log(checkedList[0]);
         this.commodityCate = checkedList[0].title;
+      }
+    },
+    expireOnSelect(res, { selectIndex, checked, checkedList }) {
+      console.log(res, selectIndex, checked, checkedList.length);
+      if (checked) {
+        console.log(checkedList[0]);
+        this.expireDays = this.expireList[selectIndex].day;
       }
     },
     commodityNameOnchange: function(event) {
@@ -177,7 +176,8 @@ export default {
         isEmpty(this.commodityName) ||
         isEmpty(this.commodityPrice) ||
         isEmpty(this.shopPosition) ||
-        isEmpty(this.commodityCate)
+        isEmpty(this.commodityCate) ||
+        this.expireDays < 1
       ) {
         return;
       }
@@ -186,7 +186,8 @@ export default {
         this.commodityName,
         this.commodityPrice,
         this.shopPosition,
-        this.commodityCate
+        this.commodityCate,
+        this.expireDays
       );
 
       let _this = this;
@@ -203,7 +204,8 @@ export default {
             shopPosition: _this.shopPosition,
             userLoginId: user.userLoginId,
             clientLat: _this.clientLat,
-            clientLng: _this.clientLng
+            clientLng: _this.clientLng,
+            expireDays: _this.expireDays
           }
         }).then(
           function(data) {

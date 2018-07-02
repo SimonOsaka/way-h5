@@ -139,15 +139,28 @@
               </div>
               <div :key="i"
                    :index="i"
-                   style="flex-direction:row; padding-left: 20px; padding-top: 20px;">
-                <div style="flex-direction:row;flex: 1 1 0%;"
-                     @click="clickReal(i)">
-                  <text class="iconfont"
-                        style="color: #ccc;">&#xe644;</text>
-                  <text class="c_real"
-                        style="color: #ccc;">({{discountObj.cReal}})</text>
+                   style="flex-direction:column; padding-left: 20px; padding-top: 20px;">
+                <div style="flex-direction: row;">
+                  <div style="flex-direction:row;flex: 1 1 0%;"
+                       @click="clickReal(i)">
+                    <text class="iconfont"
+                          style="color: #ccc;">&#xe644;</text>
+                    <text class="c_real"
+                          style="color: #ccc;">({{discountObj.cReal}})</text>
+                  </div>
+                  <div style="text-align: right; flex-direction: row;"
+                       v-if="discountObj.cExpireMills">
+                    <wxc-countdown :time="discountObj.cExpireMills"
+                                   tpl="{m}分{s}秒"
+                                   @wxcOnComplete="discountExpireOnCompleted(i)"
+                                   :timeBoxStyle="{backgroundColor: 'transparent', width: '40px'}"
+                                   :timeTextStyle="{color: 'red'}"
+                                   :dotTextStyle="{color: '#CCCCCC'}">
+                    </wxc-countdown>
+                    <text style="color: #CCCCCC; font-size: 18px; font-weight: bold; margin-left: -11px;">后失效</text>
+                  </div>
                 </div>
-                <div style="flex-direction:row;flex: 2 1 0%;">
+                <div style="flex-direction:row;flex: 1 1 0%; padding-top: 10px;">
                   <text class="iconfont red">&#xe651;</text>
                   <text class="c_real"
                         style="color: #ccc;">{{discountObj.position}}</text>
@@ -219,7 +232,14 @@
 </template>
 
 <script>
-import { WxcSearchbar, Utils, WxcTabBar, WxcCell, WxcButton } from "weex-ui";
+import {
+  WxcSearchbar,
+  Utils,
+  WxcTabBar,
+  WxcCell,
+  WxcButton,
+  WxcCountdown
+} from "weex-ui";
 import {
   getEntryUrl,
   postMessage,
@@ -239,7 +259,7 @@ const modal = weex.requireModule("modal");
 const dom = weex.requireModule("dom");
 
 export default {
-  components: { WxcSearchbar, WxcTabBar, WxcCell, WxcButton },
+  components: { WxcSearchbar, WxcTabBar, WxcCell, WxcButton, WxcCountdown },
   data: () => ({
     city: "",
     cellStyle: { backgroundColor: "#ffffff" },
@@ -443,6 +463,7 @@ export default {
               mDistance: discountData.shopDistance,
               cReal: discountData.commodityReal,
               cCate: discountData.commodityCate,
+              cExpireMills: discountData.limitTimeExpireMills,
               cPicUrl: ""
             };
             _this.discountList.push(discountObj);
@@ -661,6 +682,9 @@ export default {
           animated: "true"
         });
       }
+    },
+    discountExpireOnCompleted(i) {
+      this.discountList.splice(i, 1);
     }
   }
 };
