@@ -3,35 +3,20 @@
     <scroller class="scroller">
       <category title="商品分类"></category>
       <div class="content">
-        <wxc-grid-select :single="true"
-                         :list="cateData"
-                         @select="params => onSelect('res3', params)">
+        <wxc-grid-select :single="true" :list="cateData" @select="params => onSelect('res3', params)">
         </wxc-grid-select>
       </div>
 
       <category title="商品名称"></category>
-      <input type="text"
-             placeholder="请输入名称"
-             class="input"
-             :autofocus=true
-             @input="commodityNameOnchange" />
+      <input type="text" placeholder="请输入名称" class="input" :autofocus=true @input="commodityNameOnchange" />
 
       <category title="商品价格（元）"></category>
-      <input type="number"
-             placeholder="请输入价格"
-             class="input"
-             :autofocus=true
-             @input="commodityPriceOnchange" />
+      <input type="number" placeholder="请输入价格" class="input" :autofocus=true @input="commodityPriceOnchange" />
 
       <category title="商家位置"></category>
-      <textarea class="textarea"
-                @input="shopPositionOnchange"
-                :value="shopPosition"></textarea>
+      <textarea class="textarea" @input="shopPositionOnchange" :value="shopPosition"></textarea>
       <div>
-        <div @click="inputTipClicked(i)"
-             v-for="(tip, i) in inputTipsList"
-             :key="i"
-             style="flex-direction: column; padding-left: 10px; padding-top:10px;padding-bottom:10px;">
+        <div @click="inputTipClicked(i)" v-for="(tip, i) in inputTipsList" :key="i" style="flex-direction: column; padding-left: 10px; padding-top:10px;padding-bottom:10px;">
           <text style="margin-left: 10px;">{{tip.name}}</text>
           <text style="color: #cccccc;">{{tip.district}}</text>
         </div>
@@ -39,16 +24,12 @@
 
       <category title="优惠时间"></category>
       <div class="content">
-        <wxc-grid-select :single="true"
-                         :list="expireList"
-                         @select="params => expireOnSelect('expire', params)">
+        <wxc-grid-select :single="true" :list="expireList" @select="params => expireOnSelect('expire', params)">
         </wxc-grid-select>
       </div>
 
       <div style="align-items:center; padding-top: 20px;">
-        <wxc-button type="white"
-                    text="发布"
-                    @wxcButtonClicked="createDiscountClicked"></wxc-button>
+        <wxc-button type="white" text="发布" @wxcButtonClicked="createDiscountClicked"></wxc-button>
       </div>
     </scroller>
 

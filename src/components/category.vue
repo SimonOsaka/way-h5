@@ -1,7 +1,7 @@
 <template>
-    <div class="category">
-        <text class="category-text">{{title}}</text>
-    </div>
+  <div class="category">
+    <text class="category-text">{{title}}</text>
+  </div>
 </template>
 
 <style scoped>

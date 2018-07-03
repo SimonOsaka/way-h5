@@ -2,29 +2,21 @@
   <div>
     <scroller class="scroller">
       <div>
-        <image class="image"
-               resize="cover"
-               :src="commodityObj.cPicUrl"></image>
+        <image class="image" resize="cover" :src="commodityObj.cPicUrl"></image>
       </div>
       <div style="margin-top: 10px;">
-        <wxc-cell :has-arrow="false"
-                  :has-bottom-border="true"
-                  :cell-style="cellStyle">
-          <div slot="label"
-               style="height: auto;">
+        <wxc-cell :has-arrow="false" :has-bottom-border="true" :cell-style="cellStyle">
+          <div slot="label" style="height: auto;">
             <div style="flex-direction: row;">
               <text style="width: 600px;">{{commodityObj.cName}}</text>
             </div>
             <div style="flex-direction:row; margin-top: 10px;">
-              <text class="c_money"
-                    style="font-size:20px; padding-top:10px;">¥</text>
+              <text class="c_money" style="font-size:20px; padding-top:10px;">¥</text>
               <text class="c_money">{{commodityObj.cPrice}}</text>
             </div>
           </div>
-          <div slot="value"
-               style="flex-direction: row; width: 110px; height: 150px;">
-            <div style="position: absolute; top: 0;"
-                 @click="popupOverlayClicked">
+          <div slot="value" style="flex-direction: row; width: 110px; height: 150px;">
+            <div style="position: absolute; top: 0;" @click="popupOverlayClicked">
               <text class="iconfont">&#xe6f3; 分享</text>
               <text></text>
             </div>
@@ -32,47 +24,29 @@
         </wxc-cell>
       </div>
       <div>
-        <wxc-cell :has-arrow="false"
-                  :has-bottom-border="true">
-          <div slot="label"
-               style="flex-direction:row;">
-            <text class="iconfont"
-                  style="margin-top:6px;">&#xe651;</text>
+        <wxc-cell :has-arrow="false" :has-bottom-border="true">
+          <div slot="label" style="flex-direction:row;">
+            <text class="iconfont" style="margin-top:6px;">&#xe651;</text>
             <text>{{commodityObj.cPosition}}</text>
           </div>
         </wxc-cell>
       </div>
       <div>
-        <wxc-cell :has-arrow="false"
-                  :has-bottom-border="true"
-                  @wxcCellClicked="shopCellClicked">
-          <image slot="label"
-                 resize="cover"
-                 style="width: 64px; height: 64px;"
-                 :src="commodityObj.shopLogoUrl"></image>
-          <text slot="title"
-                style="margin-left: 10px;">{{commodityObj.shopName}}</text>
+        <wxc-cell :has-arrow="false" :has-bottom-border="true" @wxcCellClicked="shopCellClicked">
+          <image slot="label" resize="cover" style="width: 64px; height: 64px;" :src="commodityObj.shopLogoUrl"></image>
+          <text slot="title" style="margin-left: 10px;">{{commodityObj.shopName}}</text>
         </wxc-cell>
       </div>
     </scroller>
 
-    <wxc-popup height="160"
-               :show="isAutoShow"
-               pos="bottom"
-               @wxcPopupOverlayClicked="popupOverlayAutoClick">
-      <div @click="weixinClicked"
-           style="width: 128px; height: 128px; margin-left: 311px; margin-top: 24px;">
-        <text class="iconfont"
-              style="font-size: 64px;">&#xe622;</text>
+    <wxc-popup height="160" :show="isAutoShow" pos="bottom" @wxcPopupOverlayClicked="popupOverlayAutoClick">
+      <div @click="weixinClicked" style="width: 128px; height: 128px; margin-left: 311px; margin-top: 24px;">
+        <text class="iconfont" style="font-size: 64px;">&#xe622;</text>
         <text style="margin-left: 10px;">微信</text>
       </div>
     </wxc-popup>
 
-    <wxc-dialog title="功能开发中"
-                content="请使用当前App的微信分享功能"
-                :show="show"
-                :single="true"
-                @wxcDialogConfirmBtnClicked="wxcDialogConfirmBtnClicked"></wxc-dialog>
+    <wxc-dialog title="功能开发中" content="请使用当前App的微信分享功能" :show="show" :single="true" @wxcDialogConfirmBtnClicked="wxcDialogConfirmBtnClicked"></wxc-dialog>
   </div>
 </template>
 

@@ -1,13 +1,9 @@
 <template>
-    <div class="content">
-        <wxc-result :type="type"
-                    padding-top="232"
-                    :custom-set="customSet"
-                    @wxcResultButtonClicked="resultButtonClick"
-                    :show="show"></wxc-result>
-    </div>
+  <div class="content">
+    <wxc-result :type="type" padding-top="232" :custom-set="customSet" @wxcResultButtonClicked="resultButtonClick" :show="show"></wxc-result>
+  </div>
 </template>
-
+ 
 <style scoped>
 .content {
   position: absolute;

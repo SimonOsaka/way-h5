@@ -1,27 +1,15 @@
 <template>
   <div class="container">
     <scroller class="scroller">
-      <wxc-searchbar ref="wxc-searchbar"
-                     placeholder="请输入地址"
-                     :always-show-cancel="alwaysShowCancel"
-                     :return-key-type="returnKeyType"
-                     @wxcSearchbarInputReturned="wxcSearchbarInputOnInput"></wxc-searchbar>
+      <wxc-searchbar ref="wxc-searchbar" placeholder="请输入地址" :always-show-cancel="alwaysShowCancel" :return-key-type="returnKeyType" @wxcSearchbarInputReturned="wxcSearchbarInputOnInput"></wxc-searchbar>
       <div v-if="currentAddress != ''">
         <category title="当前地址"></category>
-        <wxc-cell :title="currentAddress"
-                  :has-arrow="false"
-                  :has-top-border="true">
+        <wxc-cell :title="currentAddress" :has-arrow="false" :has-top-border="true">
         </wxc-cell>
       </div>
       <div v-if="searchList.length > 0">
         <category title="搜索地址"></category>
-        <wxc-cell v-for="(result, i) in searchList"
-                  :key="i"
-                  :title="result.addressTitle"
-                  :desc="result.addressDesc"
-                  @wxcCellClicked="wxcIndexlistItemClicked(i)"
-                  :has-arrow="false"
-                  :has-top-border="true">
+        <wxc-cell v-for="(result, i) in searchList" :key="i" :title="result.addressTitle" :desc="result.addressDesc" @wxcCellClicked="wxcIndexlistItemClicked(i)" :has-arrow="false" :has-top-border="true">
         </wxc-cell>
       </div>
     </scroller>

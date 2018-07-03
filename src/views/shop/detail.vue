@@ -2,25 +2,15 @@
   <div>
     <scroller class="scroller">
       <div style="flex-direction: column; align-items: center; justice-content: center; padding-top: 10px; padding-bottom: 10px;">
-        <image class="image_shop"
-               :src="shop.shopLogoUrl"></image>
+        <image class="image_shop" :src="shop.shopLogoUrl"></image>
         <text class="text_shop">{{shop.shopName}}</text>
       </div>
       <div style="margin-top: 10px;">
-        <wxc-cell label="商家地址："
-                  :title="shop.shopAddress"
-                  :has-arrow="false"
-                  :has-bottom-border="true">
+        <wxc-cell label="商家地址：" :title="shop.shopAddress" :has-arrow="false" :has-bottom-border="true">
         </wxc-cell>
-        <wxc-cell label="商家电话："
-                  :title="shop.shopTel"
-                  :has-arrow="false"
-                  :has-bottom-border="true">
+        <wxc-cell label="商家电话：" :title="shop.shopTel" :has-arrow="false" :has-bottom-border="true">
         </wxc-cell>
-        <wxc-cell label="营业时间："
-                  :title="shop.shopBusinessTimeAll"
-                  :has-arrow="false"
-                  :has-bottom-border="true">
+        <wxc-cell label="营业时间：" :title="shop.shopBusinessTimeAll" :has-arrow="false" :has-bottom-border="true">
         </wxc-cell>
       </div>
     </scroller>

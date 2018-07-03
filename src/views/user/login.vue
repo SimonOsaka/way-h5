@@ -7,42 +7,20 @@
       </div>
       <div class="content">
         <div>
-          <input type="tel"
-                 maxlength="11"
-                 return-key-type="done"
-                 @input="userTelOninput"
-                 style="width: 702px;"
-                 class="input"
-                 placeholder="手机号" />
+          <input type="tel" maxlength="11" return-key-type="done" @input="userTelOninput" style="width: 702px;" class="input" placeholder="手机号" />
         </div>
         <div style="flex-direction: row; margin-top: 20px;">
-          <input type="number"
-                 maxlength="6"
-                 return-key-type="go"
-                 style="width: 351px; "
-                 @input="userValidCodeOninput"
-                 class="input"
-                 placeholder="验证码" />
-          <wxc-button :text="btnGetValidCodeText"
-                      type="white"
-                      :btnStyle="{width: '341px',marginLeft: '10px'}"
-                      :disabled="btnGetValidCodeDisabled"
-                      @wxcButtonClicked="userValidCodeClicked"></wxc-button>
+          <input type="number" maxlength="6" return-key-type="go" style="width: 351px; " @input="userValidCodeOninput" class="input" placeholder="验证码" />
+          <wxc-button :text="btnGetValidCodeText" type="white" :btnStyle="{width: '341px',marginLeft: '10px'}" :disabled="btnGetValidCodeDisabled" @wxcButtonClicked="userValidCodeClicked"></wxc-button>
         </div>
       </div>
 
       <div style="align-items:center; margin-top: 20px;">
-        <wxc-button type="blue"
-                    text="登录"
-                    @wxcButtonClicked="userLoginClicked"></wxc-button>
+        <wxc-button type="blue" text="登录" @wxcButtonClicked="userLoginClicked"></wxc-button>
       </div>
     </scroller>
 
-    <wxc-dialog title="提示"
-                :content="dialogContent"
-                :show="dialogShow"
-                :single="true"
-                @wxcDialogConfirmBtnClicked="dialogConfirmBtnClicked"></wxc-dialog>
+    <wxc-dialog title="提示" :content="dialogContent" :show="dialogShow" :single="true" @wxcDialogConfirmBtnClicked="dialogConfirmBtnClicked"></wxc-dialog>
 
   </div>
 </template>
