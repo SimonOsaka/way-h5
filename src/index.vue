@@ -51,7 +51,7 @@
               <text class="c_name">{{cItem.cName}}</text>
               <div style="flex-direction:row;">
                 <text class="c_name c_money"
-                      style="font-size:20px; padding-top:10px;">¥</text>
+                      style="font-size:20px; padding-top: 3px;">¥</text>
                 <text class="c_money">{{cItem.cPrice}}</text>
               </div>
             </div>
@@ -134,7 +134,7 @@
               </div>
               <div style="flex-direction:row; padding-top: 10px;">
                 <text class="c_name c_money"
-                      style="font-size:20px; padding-top:10px;">¥</text>
+                      style="font-size:20px; padding-top:4px;">¥</text>
                 <text class="c_money">{{discountObj.cPrice}}</text>
               </div>
               <div :key="i"
@@ -146,7 +146,7 @@
                     <text class="iconfont"
                           style="color: #ccc;">&#xe644;</text>
                     <text class="c_real"
-                          style="color: #ccc;">({{discountObj.cReal}})</text>
+                          style="color: #ccc; margin-left: 10px;">{{discountObj.cReal}}</text>
                   </div>
                   <div style="text-align: right; flex-direction: row;"
                        v-if="discountObj.cExpireMills">

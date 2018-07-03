@@ -6,7 +6,7 @@ export default {
       codePoint: '\ue6b8'
     },
     {
-      title: '优惠消息',
+      title: '优惠信息',
       codePoint: '\ue752',
       badge: 0
     },
