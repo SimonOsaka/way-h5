@@ -162,6 +162,10 @@ export default {
         function(data) {
           console.log("success", data);
           if (data.code != 200) {
+            navigator.push({
+              url: getEntryUrl("404"),
+              animated: true
+            });
             return;
           }
           let discountDetail = data.data;
