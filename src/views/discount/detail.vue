@@ -2,12 +2,7 @@
   <div>
     <scroller class="scroller">
       <div>
-        <image class="image" resize="cover" src="http://h5.way.com/images/clothes.jpg" v-if="discountObj.cCate == '服装'">/</image>
-        <image class="image" resize="cover" src="http://h5.way.com/images/vegetables.jpg" v-else-if="discountObj.cCate == '蔬菜'"></image>
-        <image class="image" resize="cover" src="http://h5.way.com/images/drinks.jpg" v-else-if="discountObj.cCate == '饮料'"></image>
-        <image class="image" resize="cover" src="http://h5.way.com/images/snacks.jpg" v-else-if="discountObj.cCate == '零食'"></image>
-        <image class="image" resize="cover" src="http://h5.way.com/images/tools.jpg" v-else-if="discountObj.cCate == '工具'"></image>
-        <image class="image" resize="cover" src="http://h5.way.com/images/others.jpg" v-else="discountObj.cCate == '其它'"></image>
+        <image class="image" resize="cover" :src="discountObj.commodityImageUrl"></image>
       </div>
       <div>
         <wxc-cell :has-arrow="false" :has-bottom-border="true" :cell-style="cellStyle">
@@ -33,6 +28,13 @@
           <div slot="label" style="flex-direction:row;">
             <text class="iconfont" style="margin-top:6px;">&#xe651;</text>
             <text>{{discountObj.position}}</text>
+          </div>
+        </wxc-cell>
+      </div>
+      <div>
+        <wxc-cell :has-arrow="false" :has-bottom-border="true">
+          <div slot="label" style="flex-direction:row; text-align: center;">
+            <image :src="discountObj.staticMapUrl" style="width: 700px; height: 300px;"></image>
           </div>
         </wxc-cell>
       </div>
@@ -74,7 +76,8 @@ export default {
       cPicUrl: "",
       cName: "",
       cPrice: "",
-      position: ""
+      position: "",
+      staticMapUrl: ""
     },
     isAutoShow: false,
     show: false
@@ -139,6 +142,9 @@ export default {
           _this.discountObj.cPrice = discountDetail.commodityPrice;
           _this.discountObj.position = discountDetail.shopPosition;
           _this.discountObj.cCate = discountDetail.commodityCate;
+          _this.discountObj.staticMapUrl = discountDetail.staticMapUrl;
+          _this.discountObj.commodityImageUrl =
+            discountDetail.commodityImageUrl;
         },
         function(error) {
           console.error("failure", error);

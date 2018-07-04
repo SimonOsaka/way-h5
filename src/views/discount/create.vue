@@ -63,12 +63,12 @@ export default {
     shopPosition: "",
     commodityCate: "",
     cateData: [
-      { title: "服装" },
-      { title: "蔬菜" },
-      { title: "饮料" },
-      { title: "零食" },
-      { title: "工具" },
-      { title: "其它" }
+      { title: "服装", cate: "clothes" },
+      { title: "蔬菜", cate: "vegetables" },
+      { title: "饮料", cate: "drinks" },
+      { title: "零食", cate: "snacks" },
+      { title: "工具", cate: "tools" },
+      { title: "其它", cate: "others" }
     ],
     cateAll: {},
     clientLng: 0,
@@ -89,7 +89,7 @@ export default {
       console.log(res, selectIndex, checked, checkedList.length);
       if (checked) {
         console.log(checkedList[0]);
-        this.commodityCate = checkedList[0].title;
+        this.commodityCate = this.cateData[selectIndex].cate;
       }
     },
     expireOnSelect(res, { selectIndex, checked, checkedList }) {

@@ -36,12 +36,7 @@
         <div class="m_cell" v-for="(discountObj, i) in discountList" :key="i" :ref="'cell'+i">
           <div class="m_cell_split" v-if="i != 0"></div>
           <wxc-cell @wxcCellClicked="discountCellClicked(i)" :has-arrow="false" :cell-style="cellStyle" :has-top-border="false" :has-bottom-border="false" :has-margin="false" :auto-accessible="false">
-            <image slot="label" class="image" resize="cover" src="http://h5.way.com/images/clothes.jpg" v-if="discountObj.cCate == '服装'">/</image>
-            <image slot="label" class="image" resize="cover" src="http://h5.way.com/images/vegetables.jpg" v-else-if="discountObj.cCate == '蔬菜'"></image>
-            <image slot="label" class="image" resize="cover" src="http://h5.way.com/images/drinks.jpg" v-else-if="discountObj.cCate == '饮料'"></image>
-            <image slot="label" class="image" resize="cover" src="http://h5.way.com/images/snacks.jpg" v-else-if="discountObj.cCate == '零食'"></image>
-            <image slot="label" class="image" resize="cover" src="http://h5.way.com/images/tools.jpg" v-else-if="discountObj.cCate == '工具'"></image>
-            <image slot="label" class="image" resize="cover" src="http://h5.way.com/images/others.jpg" v-else="discountObj.cCate == '其它'"></image>
+            <image slot="label" class="image" resize="cover" :src="discountObj.commodityImageUrl"></image>
             <div slot="title">
               <div style="flex-direction: row;">
                 <text class="c_name">{{discountObj.cName}}</text>
@@ -347,7 +342,7 @@ export default {
               cReal: discountData.commodityReal,
               cCate: discountData.commodityCate,
               cExpireMills: discountData.limitTimeExpireMills,
-              cPicUrl: ""
+              commodityImageUrl: discountData.commodityImageUrl
             };
             _this.discountList.push(discountObj);
           }
