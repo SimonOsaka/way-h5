@@ -191,6 +191,10 @@ export default {
         }).then(
           function(data) {
             if (data.code != 200) {
+              modal.toast({
+                message: data.msg,
+                duration: 2
+              });
               return;
             }
             modal.toast({

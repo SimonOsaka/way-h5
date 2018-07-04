@@ -55,7 +55,7 @@
                     <text class="c_real" style="color: #ccc; margin-left: 10px;">{{discountObj.cReal}}</text>
                   </div>
                   <div style="text-align: right; flex-direction: row;" v-if="discountObj.cExpireMills">
-                    <wxc-countdown :time="discountObj.cExpireMills" tpl="{m}分{s}秒" @wxcOnComplete="discountExpireOnCompleted(i)" :timeBoxStyle="{backgroundColor: 'transparent', width: '40px'}" :timeTextStyle="{color: 'red'}" :dotTextStyle="{color: '#CCCCCC'}">
+                    <wxc-countdown :time="discountObj.cExpireMills" tpl="{d}天{h}时{m}分{s}秒" @wxcOnComplete="discountExpireOnCompleted(i)" :timeBoxStyle="{backgroundColor: 'transparent', width: '40px'}" :timeTextStyle="{color: 'red'}" :dotTextStyle="{color: '#CCCCCC'}">
                     </wxc-countdown>
                     <text style="color: #CCCCCC; font-size: 18px; font-weight: bold; margin-left: -11px;">后失效</text>
                   </div>
