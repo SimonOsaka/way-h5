@@ -51,8 +51,10 @@
               <div :key="i" :index="i" style="flex-direction:column; padding-left: 20px; padding-top: 20px;">
                 <div style="flex-direction: row;">
                   <div style="flex-direction:row;flex: 1 1 0%;" @click="clickReal(i)">
-                    <text class="iconfont" style="color: #ccc;">&#xe644;</text>
-                    <text class="c_real" style="color: #ccc; margin-left: 10px;">{{discountObj.cReal}}</text>
+                    <text class="iconfont" style="color: #ccc;" v-if="discountRealUserLoginId != discountObj.realUserLoginId">&#xe644;</text>
+                    <text class="iconfont" style="color: red;" v-else>&#xe644;</text>
+                    <text class="c_real" style="color: #ccc; margin-left: 10px;" v-if="discountRealUserLoginId != discountObj.realUserLoginId">{{discountObj.cReal}}</text>
+                    <text class="c_real" style="color: red; margin-left: 10px;" v-else>{{discountObj.cReal}}</text>
                   </div>
                   <div style="text-align: right; flex-direction: row;" v-if="discountObj.cExpireMills">
                     <wxc-countdown :time="discountObj.cExpireMills" tpl="{d}天{h}时{m}分{s}秒" @wxcOnComplete="discountExpireOnCompleted(i)" :timeBoxStyle="{backgroundColor: 'transparent', width: '40px'}" :timeTextStyle="{color: 'red'}" :dotTextStyle="{color: '#CCCCCC'}">
@@ -152,6 +154,7 @@ export default {
     discountClientLng: 0,
     discountClientLat: 0,
     discountCityCode: "",
+    discountRealUserLoginId: 0,
     main: {
       keywords: "",
       queryList: [],
@@ -266,7 +269,18 @@ export default {
 
         this.discountList.splice(0, this.discountList.length);
         this.discountPageNum = 1;
-        this.fetchDiscount();
+        getStorageVal("way:user").then(
+          data => {
+            let user = JSON.parse(data);
+            console.log("加载discount tab后", user);
+            this.discountRealUserLoginId = user.userLoginId;
+            this.fetchDiscount();
+          },
+          error => {
+            this.discountRealUserLoginId = 0;
+            this.fetchDiscount();
+          }
+        );
       }
     },
     loadMyTabContent() {
@@ -322,7 +336,8 @@ export default {
           clientLat: this.discountClientLat,
           pageNum: this.discountPageNum,
           pageSize: this.discountPageSize,
-          cityCode: this.discountCityCode
+          cityCode: this.discountCityCode,
+          realUserLoginId: this.discountRealUserLoginId
         }
       }).then(
         data => {
@@ -346,7 +361,8 @@ export default {
               cReal: discountData.commodityReal,
               cCate: discountData.commodityCate,
               cExpireMills: discountData.limitTimeExpireMills,
-              commodityImageUrl: discountData.commodityImageUrl
+              commodityImageUrl: discountData.commodityImageUrl,
+              realUserLoginId: discountData.realUserLoginId
             };
             _this.discountList.push(discountObj);
           }
@@ -360,20 +376,83 @@ export default {
     },
     clickReal(i) {
       console.log(i);
+
+      let realUserLoginId = 0;
+      getStorageVal("way:user").then(
+        data => {
+          let user = JSON.parse(data);
+          realUserLoginId = user.userLoginId;
+          console.log("click real", realUserLoginId);
+
+          let discountItem = this.discountList[i];
+          let discountId = discountItem.discountId;
+          console.log(
+            "click real local",
+            realUserLoginId,
+            "item",
+            discountItem.realUserLoginId
+          );
+          if (realUserLoginId == discountItem.realUserLoginId) {
+            //decrease
+            this.decreaseReal(i, discountId, realUserLoginId);
+          } else {
+            //increase
+            this.increaseReal(i, discountId, realUserLoginId);
+          }
+        },
+        error => {
+          navigator.push({
+            url: getEntryUrl("views/user/login"),
+            animated: true
+          });
+        }
+      );
+    },
+    increaseReal(i, discountId, realUserLoginId) {
       let _this = this;
       http({
         method: "POST",
-        url: "/discount/real/increate",
+        url: "/discount/real/increase",
         headers: {},
         body: {
-          discountId: this.discountList[i].discountId
+          discountId: discountId,
+          realUserLoginId: realUserLoginId
         }
       }).then(function(data) {
         if (data.code != 200) {
+          modal.toast({
+            message: data.msg,
+            duration: 2
+          });
           return;
         }
 
         _this.discountList[i].cReal = parseInt(_this.discountList[i].cReal) + 1;
+        _this.discountList[i].realUserLoginId = realUserLoginId;
+      });
+    },
+    decreaseReal(i, discountId, realUserLoginId) {
+      let _this = this;
+      http({
+        method: "POST",
+        url: "/discount/real/decrease",
+        headers: {},
+        body: {
+          discountId: discountId,
+          realUserLoginId: realUserLoginId
+        }
+      }).then(function(data) {
+        if (data.code != 200) {
+          modal.toast({
+            message: data.msg,
+            duration: 2
+          });
+          return;
+        }
+
+        let realCount = parseInt(_this.discountList[i].cReal) - 1;
+        _this.discountList[i].cReal = realCount < 0 ? 0 : realCount;
+        _this.discountList[i].realUserLoginId = 0;
       });
     },
     logoutClicked(e) {
