@@ -151,12 +151,14 @@ export default {
     discountTopStyle: { visibility: "hidden" },
     discountClientLng: 0,
     discountClientLat: 0,
+    discountCityCode: "",
     main: {
       keywords: "",
       queryList: [],
       queryListNoDataShow: false,
       clientLng: 0,
       clientLat: 0,
+      cityCode: "",
       pageNum: 1,
       pageSize: 20
     }
@@ -185,6 +187,7 @@ export default {
         this.city = cityObj.name;
         this.main.clientLng = cityObj.lng;
         this.main.clientLat = cityObj.lat;
+        this.main.cityCode = cityObj.cityCode;
         this.searchbarHttp();
       },
       err => {
@@ -296,6 +299,7 @@ export default {
           let city = JSON.parse(data);
           _this.discountClientLng = city.lng;
           _this.discountClientLat = city.lat;
+          _this.discountCityCode = city.cityCode;
           _this.fetchDiscountHttp();
         },
         e => {
@@ -317,7 +321,8 @@ export default {
           clientLng: this.discountClientLng,
           clientLat: this.discountClientLat,
           pageNum: this.discountPageNum,
-          pageSize: this.discountPageSize
+          pageSize: this.discountPageSize,
+          cityCode: this.discountCityCode
         }
       }).then(
         data => {
@@ -329,7 +334,6 @@ export default {
           this.discountPageNum++;
 
           let discountDataList = data.data;
-          _this.discountListNoDataShow = discountDataList.length == 0;
 
           for (let index = 0; index < discountDataList.length; index++) {
             const discountData = discountDataList[index];
@@ -346,6 +350,8 @@ export default {
             };
             _this.discountList.push(discountObj);
           }
+
+          _this.discountListNoDataShow = _this.discountList.length == 0;
         },
         error => {
           console.error("failure", error);
@@ -453,6 +459,7 @@ export default {
           let city = JSON.parse(data);
           _this.main.clientLng = city.lng;
           _this.main.clientLat = city.lat;
+          _this.main.cityCode = city.cityCode;
           _this.main.queryList.splice(0, _this.main.queryList.length);
           _this.main.pageNum = 1;
           _this.searchbarHttp();
@@ -475,6 +482,7 @@ export default {
           keywords: this.main.keywords,
           clientLng: this.main.clientLng,
           clientLat: this.main.clientLat,
+          cityCode: this.main.cityCode,
           pageNum: this.main.pageNum,
           pageSize: this.main.pageSize
         }
@@ -485,7 +493,6 @@ export default {
           }
 
           let shopQueryDataList = data.data;
-          _this.main.queryListNoDataShow = shopQueryDataList.length == 0;
 
           let shopIndex = 0;
           shopQueryDataList.forEach(shopQueryData => {
@@ -517,6 +524,8 @@ export default {
               mDistance: shopQueryData.shopDistance
             });
           });
+
+          _this.main.queryListNoDataShow = _this.main.queryList.length == 0;
 
           _this.main.pageNum++;
         },

@@ -79,10 +79,24 @@ export default {
       { title: "三天", day: 3 },
       { title: "一星期", day: 7 }
     ],
-    expireDays: 1
+    expireDays: 1,
+    cityCode: ""
   }),
   beforeCreate() {
     initIconfont();
+
+    getStorageVal("way:city").then(
+      data => {
+        let city = JSON.parse(data);
+        this.cityCode = city.cityCode;
+      },
+      e => {
+        navigator.push({
+          url: getEntryUrl("views/city/index"),
+          animated: "true"
+        });
+      }
+    );
   },
   methods: {
     onSelect(res, { selectIndex, checked, checkedList }) {
@@ -163,12 +177,23 @@ export default {
         return;
       }
 
+      if (isEmpty(this.clientLng) || isEmpty(this.clientLat)) {
+        modal.toast({
+          message: "请输入并选择商家位置",
+          duration: 2
+        });
+        return;
+      }
+
       console.log(
         this.commodityName,
         this.commodityPrice,
         this.shopPosition,
         this.commodityCate,
-        this.expireDays
+        this.expireDays,
+        this.clientLng,
+        this.clientLat,
+        this.cityCode
       );
 
       let _this = this;
@@ -186,7 +211,8 @@ export default {
             userLoginId: user.userLoginId,
             clientLat: _this.clientLat,
             clientLng: _this.clientLng,
-            expireDays: _this.expireDays
+            expireDays: _this.expireDays,
+            cityCode: _this.cityCode
           }
         }).then(
           function(data) {
