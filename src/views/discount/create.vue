@@ -174,6 +174,10 @@ export default {
         isEmpty(this.commodityCate) ||
         this.expireDays < 1
       ) {
+        modal.toast({
+          message: "请填全信息",
+          duration: 2
+        });
         return;
       }
 
@@ -260,12 +264,12 @@ export default {
   height: 500px;
 }
 .input {
-  font-size: 60px;
+  font-size: 40px;
   height: 80px;
   width: 750px;
 }
 .textarea {
-  font-size: 60px;
+  font-size: 40px;
   width: 750px;
 }
 .c_name {

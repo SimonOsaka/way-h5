@@ -49,7 +49,7 @@
                 <text class="c_money">{{discountObj.cPrice}}</text>
               </div>
               <div :key="i" :index="i" style="flex-direction:column; padding-left: 20px; padding-top: 20px;">
-                <div style="flex-direction: row;">
+                <div style="flex-direction: row; justify-content: flex-end;">
                   <div style="text-align: right; flex-direction: row;" v-if="discountObj.cExpireMills">
                     <wxc-countdown :time="discountObj.cExpireMills" tpl="{d}天{h}时{m}分{s}秒" @wxcOnComplete="discountExpireOnCompleted(i)" :timeBoxStyle="{backgroundColor: 'transparent', width: '40px'}" :timeTextStyle="{color: 'red'}" :dotTextStyle="{color: '#CCCCCC'}">
                     </wxc-countdown>
