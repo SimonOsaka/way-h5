@@ -50,12 +50,6 @@
               </div>
               <div :key="i" :index="i" style="flex-direction:column; padding-left: 20px; padding-top: 20px;">
                 <div style="flex-direction: row;">
-                  <div style="flex-direction:row;flex: 1 1 0%;" @click="clickReal(i)">
-                    <text class="iconfont" style="color: #ccc;" v-if="discountRealUserLoginId != discountObj.realUserLoginId">&#xe644;</text>
-                    <text class="iconfont" style="color: red;" v-else>&#xe644;</text>
-                    <text class="c_real" style="color: #ccc; margin-left: 10px;" v-if="discountRealUserLoginId != discountObj.realUserLoginId">{{discountObj.cReal}}</text>
-                    <text class="c_real" style="color: red; margin-left: 10px;" v-else>{{discountObj.cReal}}</text>
-                  </div>
                   <div style="text-align: right; flex-direction: row;" v-if="discountObj.cExpireMills">
                     <wxc-countdown :time="discountObj.cExpireMills" tpl="{d}天{h}时{m}分{s}秒" @wxcOnComplete="discountExpireOnCompleted(i)" :timeBoxStyle="{backgroundColor: 'transparent', width: '40px'}" :timeTextStyle="{color: 'red'}" :dotTextStyle="{color: '#CCCCCC'}">
                     </wxc-countdown>
@@ -373,87 +367,6 @@ export default {
           console.error("failure", error);
         }
       );
-    },
-    clickReal(i) {
-      console.log(i);
-
-      let realUserLoginId = 0;
-      getStorageVal("way:user").then(
-        data => {
-          let user = JSON.parse(data);
-          realUserLoginId = user.userLoginId;
-          console.log("click real", realUserLoginId);
-
-          let discountItem = this.discountList[i];
-          let discountId = discountItem.discountId;
-          console.log(
-            "click real local",
-            realUserLoginId,
-            "item",
-            discountItem.realUserLoginId
-          );
-          if (realUserLoginId == discountItem.realUserLoginId) {
-            //decrease
-            this.decreaseReal(i, discountId, realUserLoginId);
-          } else {
-            //increase
-            this.increaseReal(i, discountId, realUserLoginId);
-          }
-        },
-        error => {
-          navigator.push({
-            url: getEntryUrl("views/user/login"),
-            animated: true
-          });
-        }
-      );
-    },
-    increaseReal(i, discountId, realUserLoginId) {
-      let _this = this;
-      http({
-        method: "POST",
-        url: "/discount/real/increase",
-        headers: {},
-        body: {
-          discountId: discountId,
-          realUserLoginId: realUserLoginId
-        }
-      }).then(function(data) {
-        if (data.code != 200) {
-          modal.toast({
-            message: data.msg,
-            duration: 2
-          });
-          return;
-        }
-
-        _this.discountList[i].cReal = parseInt(_this.discountList[i].cReal) + 1;
-        _this.discountList[i].realUserLoginId = realUserLoginId;
-      });
-    },
-    decreaseReal(i, discountId, realUserLoginId) {
-      let _this = this;
-      http({
-        method: "POST",
-        url: "/discount/real/decrease",
-        headers: {},
-        body: {
-          discountId: discountId,
-          realUserLoginId: realUserLoginId
-        }
-      }).then(function(data) {
-        if (data.code != 200) {
-          modal.toast({
-            message: data.msg,
-            duration: 2
-          });
-          return;
-        }
-
-        let realCount = parseInt(_this.discountList[i].cReal) - 1;
-        _this.discountList[i].cReal = realCount < 0 ? 0 : realCount;
-        _this.discountList[i].realUserLoginId = 0;
-      });
     },
     logoutClicked(e) {
       console.log("退出登录");

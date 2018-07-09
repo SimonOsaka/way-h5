@@ -8,17 +8,33 @@
         <wxc-cell :has-arrow="false" :has-bottom-border="true" :cell-style="cellStyle">
           <div slot="label">
             <div style="flex-direction: row;">
-              <text>{{discountObj.cName}}</text>
+              <text style="width: 420px; word-wrap: break-word;">{{discountObj.cName}}</text>
             </div>
             <div style="flex-direction:row;">
-              <text class="c_money" style="font-size:20px; padding-top:10px;">¥</text>
+              <text class="c_money" style="font-size:20px; padding-top:6px;">¥</text>
               <text class="c_money">{{discountObj.cPrice}}</text>
             </div>
           </div>
           <div slot="value" style="flex-direction: row;">
-            <div style="height: 75px;" @click="popupOverlayClicked">
-              <text class="iconfont">&#xe6f3; 分享</text>
-              <text></text>
+            <div style="flex-direction: column; margin-left: 10px;" v-if="discountReal.highlight == 'real'" @click="clickDecreaseReal()">
+              <text class="iconfont" style="font-size: 42px; color: red;">&#xe7f2;</text>
+              <text style="font-size: 22px; color: red; text-align: center;">{{discountReal.real}}</text>
+            </div>
+            <div style="flex-direction: column; margin-left: 10px;" v-else @click="clickIncreaseReal()">
+              <text class="iconfont" style="font-size: 42px;">&#xe7f2;</text>
+              <text style="font-size: 22px; text-align: center;">{{discountReal.real}}</text>
+            </div>
+            <div style="flex-direction: column; margin-left: 50px;" v-if="discountReal.highlight == 'unreal'" @click="clickDecreaseUnreal()">
+              <text class="iconfont" style="font-size: 42px; color: red;">&#xe846;</text>
+              <text style="font-size: 22px; color: red; text-align: center;">{{discountReal.unreal}}</text>
+            </div>
+            <div style="flex-direction: column; margin-left: 50px;" v-else @click="clickIncreaseUnreal()">
+              <text class="iconfont" style="font-size: 42px;">&#xe846;</text>
+              <text style="font-size: 22px; text-align: center;">{{discountReal.unreal}}</text>
+            </div>
+            <div style="flex-direction: column; margin-left: 50px;" @click="popupOverlayClicked">
+              <text class="iconfont" style="font-size: 42px;">&#xe6f3;</text>
+              <text style="font-size: 22px;">分享</text>
             </div>
           </div>
         </wxc-cell>
@@ -32,7 +48,7 @@
         </wxc-cell>
       </div>
       <div>
-        <wxc-cell :has-arrow="false" :has-bottom-border="true">
+        <wxc-cell :has-arrow="false" :has-bottom-border="true" @wxcCellClicked="clickStaticMap()">
           <div slot="label" style="flex-direction:row; text-align: center;">
             <image :src="discountObj.staticMapUrl" style="width: 700px; height: 300px;"></image>
           </div>
@@ -60,7 +76,8 @@ import {
   getStorageValue,
   initIconfont,
   getStorageVal,
-  getUrlKey
+  getUrlKey,
+  setStorageVal
 } from "../../tools/utils.js";
 import { loadCateImageUrl } from "../../tools/image.js";
 import { http } from "../../tools/http.js";
@@ -71,6 +88,7 @@ export default {
   components: { WxcCell, WxcPopup, WxcDialog },
   data: () => ({
     cellStyle: { height: "auto" },
+    secondCellStyle: { paddingTop: "0" },
     discountObj: {
       id: 0,
       cPicUrl: "",
@@ -79,17 +97,34 @@ export default {
       position: "",
       staticMapUrl: ""
     },
+    discountReal: {
+      real: "",
+      unreal: "",
+      highlight: ""
+    },
     isAutoShow: false,
-    show: false
+    show: false,
+    realUserLoginId: 0
   }),
   beforeCreate() {
     initIconfont();
   },
   created() {
+    console.log("created in...");
     getStorageVal("way:discount:id").then(
       data => {
         this.discountObj.id = data;
-        this.discountDetailHttp();
+        getStorageVal("way:user").then(
+          data => {
+            let user = JSON.parse(data);
+            this.realUserLoginId = user.userLoginId;
+            console.log("realUserLoginId=", this.realUserLoginId);
+            this.discountDetailHttp();
+          },
+          error => {
+            this.discountDetailHttp();
+          }
+        );
       },
       e => {
         this.discountObj.id = getUrlKey("discountId");
@@ -99,9 +134,12 @@ export default {
           return;
         }
 
+        setStorageVal("way:discount:id", this.discountObj.id);
+
         this.discountDetailHttp();
       }
     );
+    console.log("created out...");
   },
   methods: {
     popupOverlayAutoClick() {
@@ -119,12 +157,14 @@ export default {
     },
     discountDetailHttp() {
       let _this = this;
+      console.log("realUserLoginId", this.realUserLoginId);
       http({
         method: "GET",
         url: "/discount/getDetail",
         headers: {},
         params: {
-          discountId: this.discountObj.id
+          discountId: this.discountObj.id,
+          realUserLoginId: this.realUserLoginId
         }
       }).then(
         function(data) {
@@ -143,11 +183,128 @@ export default {
           _this.discountObj.position = discountDetail.shopPosition;
           _this.discountObj.cCate = discountDetail.commodityCate;
           _this.discountObj.staticMapUrl = discountDetail.staticMapUrl;
+          _this.discountObj.shopLng = discountDetail.shopLng;
+          _this.discountObj.shopLat = discountDetail.shopLat;
           _this.discountObj.commodityImageUrl =
             discountDetail.commodityImageUrl;
+          _this.discountObj.commodityReal = discountDetail.commodityReal;
+          _this.discountObj.commodityUnreal = discountDetail.commodityUnreal;
+          _this.discountObj.realType = discountDetail.realType;
+          _this.discountReal = {
+            real:
+              discountDetail.commodityReal > 0
+                ? discountDetail.commodityReal
+                : "好评",
+            unreal:
+              discountDetail.commodityUnreal > 0
+                ? discountDetail.commodityUnreal
+                : "差评",
+            highlight:
+              discountDetail.realType == 0
+                ? "real"
+                : discountDetail.realType == 1 ? "unreal" : ""
+          };
         },
         function(error) {
           console.error("failure", error);
+        }
+      );
+    },
+    increaseReal(operate, realType) {
+      let _this = this;
+      getStorageVal("way:user").then(
+        data => {
+          let user = JSON.parse(data);
+          let realUserLoginId = user.userLoginId;
+          let discountId = _this.discountObj.id;
+          let url;
+          if (operate == "increase") {
+            url = "/discount/real/increase";
+          } else if (operate == "decrease") {
+            url = "/discount/real/decrease";
+          } else {
+            return;
+          }
+          http({
+            method: "POST",
+            url: url,
+            headers: {},
+            body: {
+              realType: realType,
+              discountId: discountId,
+              realUserLoginId: realUserLoginId
+            }
+          }).then(function(data) {
+            if (data.code != 200) {
+              modal.toast({
+                message: data.msg,
+                duration: 2
+              });
+              return;
+            }
+
+            let discountRealItem = data.data;
+            let realCount =
+              discountRealItem.discountReal == 0
+                ? "好评"
+                : discountRealItem.discountReal;
+
+            let unrealCount =
+              discountRealItem.discountUnReal == 0
+                ? "差评"
+                : discountRealItem.discountUnReal;
+
+            _this.discountReal = {
+              real: realCount,
+              unreal: unrealCount,
+              highlight: operate == "increase" ? realType : ""
+            };
+          });
+        },
+        error => {
+          navigator.push({
+            url: getEntryUrl("views/user/login"),
+            animated: true
+          });
+        }
+      );
+    },
+    clickIncreaseReal() {
+      this.increaseReal("increase", "real");
+    },
+    clickDecreaseReal() {
+      this.increaseReal("decrease", "real");
+    },
+    clickIncreaseUnreal() {
+      this.increaseReal("increase", "unreal");
+    },
+    clickDecreaseUnreal() {
+      this.increaseReal("decrease", "unreal");
+    },
+    clickStaticMap() {
+      let dest = this.discountObj.shopLng + "," + this.discountObj.shopLat;
+      let destName = encodeURIComponent(this.discountObj.position);
+      getStorageVal("way:city").then(
+        data => {
+          let city = JSON.parse(data);
+          let start = city.lng + "," + city.lat;
+
+          window.location.href =
+            "//m.amap.com/navi/?start=" +
+            start +
+            "&dest=" +
+            dest +
+            "&destName=" +
+            destName +
+            "&naviBy=walk&key=e318d250a2b4d53d864f7d712cc069da";
+        },
+        err => {
+          window.location.href =
+            "//m.amap.com/navi/?dest=" +
+            dest +
+            "&destName=" +
+            destName +
+            "&key=e318d250a2b4d53d864f7d712cc069da";
         }
       );
     }
