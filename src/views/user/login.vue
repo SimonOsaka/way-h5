@@ -18,6 +18,11 @@
       <div style="align-items:center; margin-top: 20px;">
         <wxc-button type="blue" text="登录" @wxcButtonClicked="userLoginClicked"></wxc-button>
       </div>
+
+      <div style="flex-direction: row; margin-top: 20px; justify-content: center;">
+        <text class="user_agreement"> 首次登录即代表注册，并且同意 </text>
+        <text class="user_agreement link" @click="clickUserAgreement()">《用户服务协议》 </text>
+      </div>
     </scroller>
 
     <wxc-dialog title="提示" :content="dialogContent" :show="dialogShow" :single="true" @wxcDialogConfirmBtnClicked="dialogConfirmBtnClicked"></wxc-dialog>
@@ -154,7 +159,8 @@ export default {
             "way:user",
             JSON.stringify({
               userLoginId: userProfile.userLoginId,
-              userNickName: userProfile.userNickName
+              userNickName: userProfile.userNickName,
+              userToken: userProfile.token
             })
           ).then(
             data => {
@@ -184,6 +190,12 @@ export default {
     dialogConfirmBtnClicked(e) {
       this.dialogContent = "";
       this.dialogShow = false;
+    },
+    clickUserAgreement() {
+      navigator.push({
+        url: getEntryUrl("views/user/agreements"),
+        animated: true
+      });
     }
   }
 };
@@ -224,5 +236,12 @@ export default {
   border-style: solid;
   border-color: #a5a5a5;
   border-radius: 12px;
+}
+.user_agreement {
+  font-size: 22px;
+  color: #a5a5a5;
+}
+.link {
+  color: #2395ff;
 }
 </style>

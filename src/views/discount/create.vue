@@ -206,7 +206,9 @@ export default {
         http({
           method: "POST",
           url: "/discount/create",
-          headers: {},
+          headers: {
+            token: user.userToken
+          },
           body: {
             commodityName: _this.commodityName,
             commodityCate: _this.commodityCate,

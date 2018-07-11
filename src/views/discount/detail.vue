@@ -104,7 +104,8 @@ export default {
     },
     isAutoShow: false,
     show: false,
-    realUserLoginId: 0
+    realUserLoginId: 0,
+    realUserToken: ""
   }),
   beforeCreate() {
     initIconfont();
@@ -118,6 +119,7 @@ export default {
           data => {
             let user = JSON.parse(data);
             this.realUserLoginId = user.userLoginId;
+            this.realUserToken = user.userToken;
             console.log("realUserLoginId=", this.realUserLoginId);
             this.discountDetailHttp();
           },
@@ -161,7 +163,9 @@ export default {
       http({
         method: "GET",
         url: "/discount/getDetail",
-        headers: {},
+        headers: {
+          token: this.realUserToken || ""
+        },
         params: {
           discountId: this.discountObj.id,
           realUserLoginId: this.realUserLoginId
@@ -216,6 +220,7 @@ export default {
         data => {
           let user = JSON.parse(data);
           let realUserLoginId = user.userLoginId;
+          let userToken = user.userToken;
           let discountId = _this.discountObj.id;
           let url;
           if (operate == "increase") {
@@ -228,7 +233,9 @@ export default {
           http({
             method: "POST",
             url: url,
-            headers: {},
+            headers: {
+              token: userToken
+            },
             body: {
               realType: realType,
               discountId: discountId,

@@ -149,6 +149,7 @@ export default {
     discountClientLat: 0,
     discountCityCode: "",
     discountRealUserLoginId: 0,
+    userToken: "",
     main: {
       keywords: "",
       queryList: [],
@@ -267,7 +268,8 @@ export default {
           data => {
             let user = JSON.parse(data);
             console.log("加载discount tab后", user);
-            this.discountRealUserLoginId = user.userLoginId;
+            // this.discountRealUserLoginId = user.userLoginId;
+            // this.userToken = user.userToken;
             this.fetchDiscount();
           },
           error => {
@@ -330,8 +332,8 @@ export default {
           clientLat: this.discountClientLat,
           pageNum: this.discountPageNum,
           pageSize: this.discountPageSize,
-          cityCode: this.discountCityCode,
-          realUserLoginId: this.discountRealUserLoginId
+          cityCode: this.discountCityCode
+          // realUserLoginId: this.discountRealUserLoginId
         }
       }).then(
         data => {
