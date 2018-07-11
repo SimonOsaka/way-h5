@@ -12,6 +12,7 @@
 </style>
 
 <script>
+import { setPageTitle } from "../../tools/utils.js";
 import { Utils } from "weex-ui";
 import { http } from "../../tools/http.js";
 
@@ -19,6 +20,9 @@ export default {
   data: () => ({
     userAgreementsUrl: ""
   }),
+  beforeCreate() {
+    setPageTitle("用户服务协议");
+  },
   methods: {
     queryUserAgreementsUrl() {
       let _this = this;

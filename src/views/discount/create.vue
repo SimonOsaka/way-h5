@@ -48,7 +48,8 @@ import {
   isEmpty,
   getStorageVal,
   setStorageVal,
-  getUrlKey
+  getUrlKey,
+  setPageTitle
 } from "../../tools/utils.js";
 import { http } from "../../tools/http.js";
 import category from "../../components/category.vue";
@@ -84,6 +85,7 @@ export default {
   }),
   beforeCreate() {
     initIconfont();
+    setPageTitle("发布优惠");
 
     getStorageVal("way:city").then(
       data => {

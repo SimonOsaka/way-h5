@@ -22,18 +22,17 @@ const helper = require('./helper');
  * Modify the url that will open on the browser.
  * @param {Array} entry 
  */
-const postMessageToOpenPage =  (entry) => {
+const postMessageToOpenPage = (entry) => {
   let entrys = Object.keys(entry);
   let openpage = config.dev.openPage;
   // exclude vendor entry.
-  entrys = entrys.filter(entry => entry !== 'vendor' );
-  if(entrys.indexOf('index') > -1) {
+  entrys = entrys.filter(entry => entry !== 'vendor');
+  if (entrys.indexOf('index') > -1) {
     openpage += `?page=index.js`;
-  }
-  else {
+  } else {
     openpage += `?page=${entrys[0]}.js`;
   }
-  if(entrys.length > 1) {
+  if (entrys.length > 1) {
     openpage += `&entrys=${entrys.join('|')}`
   }
   return openpage;
@@ -48,7 +47,7 @@ const openPage = postMessageToOpenPage(commonConfig[0].entry);
 const generateHtmlWebpackPlugin = (entry) => {
   let entrys = Object.keys(entry);
   // exclude vendor entry.
-  entrys = entrys.filter(entry => entry !== 'vendor' );
+  entrys = entrys.filter(entry => entry !== 'vendor');
   const htmlPlugin = entrys.map(name => {
     return new HtmlWebpackPlugin({
       filename: name + '.html',
@@ -73,9 +72,12 @@ const devWebpackConfig = webpackMerge(commonConfig[0], {
    * See: http://webpack.github.io/docs/configuration.html#module
    */
   module: {
-    rules: utils.styleLoaders({ sourceMap: config.dev.cssSourceMap, usePostCSS: true })
+    rules: utils.styleLoaders({
+      sourceMap: config.dev.cssSourceMap,
+      usePostCSS: true
+    })
   },
-   /**
+  /**
    * Developer tool to enhance debugging
    *
    * See: http://webpack.github.io/docs/configuration.html#devtool
@@ -135,11 +137,12 @@ const devWebpackConfig = webpackMerge(commonConfig[0], {
     port: config.dev.port,
     historyApiFallback: config.dev.historyApiFallback,
     public: config.dev.public,
-    open:config.dev.open,
+    open: config.dev.open,
     watchContentBase: config.dev.watchContentBase,
-    overlay: config.dev.errorOverlay
-    ? { warnings: false, errors: true }
-    : false,
+    overlay: config.dev.errorOverlay ? {
+      warnings: false,
+      errors: true
+    } : false,
     proxy: config.dev.proxyTable,
     quiet: true, // necessary for FriendlyErrorsPlugin
     openPage: openPage,
@@ -177,9 +180,8 @@ module.exports = new Promise((resolve, reject) => {
         compilationSuccessInfo: {
           messages: [`Your application is running here: http://${devWebpackConfig.devServer.host}:${port}`],
         },
-        onErrors: config.dev.notifyOnErrors
-        ? utils.createNotifierCallback()
-        : undefined
+        onErrors: config.dev.notifyOnErrors ?
+          utils.createNotifierCallback() : undefined
       }))
 
       resolve(devWebpackConfig)

@@ -23,7 +23,8 @@ import {
   getEntryUrl,
   receiveMessage,
   initIconfont,
-  getStorageVal
+  getStorageVal,
+  setPageTitle
 } from "../../tools/utils.js";
 import { http } from "../../tools/http.js";
 const navigator = weex.requireModule("navigator");
@@ -42,6 +43,7 @@ export default {
   }),
   beforeCreate() {
     initIconfont();
+    setPageTitle("商家详情");
   },
   created() {
     let _this = this;

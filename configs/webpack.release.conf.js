@@ -24,6 +24,7 @@ const ScriptExtHtmlWebpackPlugin = require('script-ext-html-webpack-plugin');
 const generateMultipleEntrys = (entry) => {
   let entrys = Object.keys(entry);
   // exclude vendor entry.
+  console.log("entry对象", entry);
   entrys = entrys.filter(entry => entry !== 'vendor');
   const htmlPlugin = entrys.map(name => {
     console.log('生成多入口，name=' + name);

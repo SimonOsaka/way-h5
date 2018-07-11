@@ -117,6 +117,7 @@ import {
   setStorageValue,
   getStorageValue,
   initIconfont,
+  setPageTitle,
   modalDebug,
   getStorageVal,
   setStorageVal
@@ -161,6 +162,9 @@ export default {
       pageSize: 20
     }
   }),
+  beforeCreate(){
+    setPageTitle("首页");
+  },
   created() {
     initIconfont();
     // getStorageVal("way:tab:selectedIndex").then(
@@ -247,10 +251,14 @@ export default {
     switchTabContent(index) {
       console.log("switch to index ", index);
       if (index == 1) {
+        setPageTitle("优惠信息");
         this.loadDiscountTabContent();
       } else if (index == 2) {
         console.log("into my tab");
+        setPageTitle("个人信息");
         this.loadMyTabContent();
+      } else {
+        setPageTitle("首页");
       }
     },
     loadDiscountTabContent() {

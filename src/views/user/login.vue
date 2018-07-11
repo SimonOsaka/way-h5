@@ -39,7 +39,8 @@ import {
   isEmpty,
   setStorageVal,
   modalDebug,
-  getUrlKey
+  getUrlKey,
+  setPageTitle
 } from "../../tools/utils.js";
 import { http } from "../../tools/http.js";
 import category from "../../components/category.vue";
@@ -60,6 +61,7 @@ export default {
   }),
   beforeCreate() {
     initIconfont();
+    setPageTitle("登录");
   },
   methods: {
     userTelOninput: function(event) {

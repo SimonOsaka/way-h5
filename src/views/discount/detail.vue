@@ -77,6 +77,7 @@ import {
   initIconfont,
   getStorageVal,
   getUrlKey,
+  setPageTitle,
   setStorageVal
 } from "../../tools/utils.js";
 import { loadCateImageUrl } from "../../tools/image.js";
@@ -109,6 +110,7 @@ export default {
   }),
   beforeCreate() {
     initIconfont();
+    setPageTitle("优惠详情");
   },
   created() {
     console.log("created in...");

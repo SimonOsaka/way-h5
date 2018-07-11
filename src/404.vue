@@ -17,6 +17,7 @@
 
 <script>
 import { WxcResult } from "weex-ui";
+import { setPageTitle } from "./tools/utils.js";
 const modal = weex.requireModule("modal");
 const navigator = weex.requireModule("navigator");
 
@@ -34,7 +35,9 @@ export default {
     }
   }),
   computed: {},
-  created() {},
+  beforeCreate() {
+    setPageTitle("404未找到");
+  },
   methods: {
     resultButtonClick(e) {
       navigator.pop({ animated: true });

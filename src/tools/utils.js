@@ -6,6 +6,11 @@ export function initIconfont() {
   })
 }
 
+export function setPageTitle(title) {
+
+  document.title = title || "页面";
+}
+
 export function getEntryUrl(filename, parameters) {
   const bundleUrl = weex.config.bundleUrl;
 

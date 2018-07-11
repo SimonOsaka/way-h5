@@ -59,7 +59,8 @@ import {
   setStorageValue,
   getStorageValue,
   initIconfont,
-  getStorageVal
+  getStorageVal,
+  setPageTitle
 } from "../../tools/utils.js";
 import { loadCateImageUrl } from "../../tools/image.js";
 import { http } from "../../tools/http.js";
@@ -85,6 +86,7 @@ export default {
   }),
   beforeCreate() {
     initIconfont();
+    setPageTitle("商品详情");
   },
   created() {
     let _this = this;

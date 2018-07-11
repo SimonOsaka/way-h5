@@ -18,7 +18,7 @@
 
 <script>
 import { WxcSearchbar, WxcCell } from "weex-ui";
-import { postMessage, getStorageVal } from "../../tools/utils.js";
+import { postMessage, getStorageVal, setPageTitle } from "../../tools/utils.js";
 import { http } from "../../tools/http.js";
 import category from "../../components/category.vue";
 const navigator = weex.requireModule("navigator");
@@ -34,6 +34,9 @@ export default {
     currentAddress: "",
     city: {}
   }),
+  beforeCreate() {
+    setPageTitle("选择城市");
+  },
   methods: {
     wxcIndexlistItemClicked(i) {
       console.log(i);
