@@ -11,14 +11,14 @@ export function http(OPTIONS = {}) {
 
   let apiRoot
   if (platform === 'web') {
-    apiRoot = 'http://api.way.com'; //window.location.origin.replace(':8081', '')
+    apiRoot = 'http://api.duozouzou.top'; //window.location.origin.replace(':8081', '')
   } else {
     if (process.env === 'test') {
       // 测试环境域名
       apiRoot = window.location.origin.replace(':8081', '') //'http://your.dev.domain.com'
     } else {
       // 正式环境域名
-      apiRoot = 'http://api.way.com' //'http://your.prod.domain.com'
+      apiRoot = 'http://api.duozouzou.top'; //'http://your.prod.domain.com'
     }
   }
 
