@@ -33,6 +33,10 @@
     </div>
     <div class="item-container" :style="contentStyle">
       <scroller v-if="!discountListNoDataShow" :style="discountScrollerStyle" @loadmore="fetchDiscount" loadmoreoffset="10" @scroll="discountScrollHandler">
+        <refresh @refresh="discountOnRefresh" @pullingdown="onpullingdown" :display="refreshing ? 'show' : 'hide'">
+          <text>{{refreshText}}</text>
+          <loading-indicator></loading-indicator>
+        </refresh>
         <div class="m_cell" v-for="(discountObj, i) in discountList" :key="i" :ref="'cell'+i">
           <div class="m_cell_split" v-if="i != 0"></div>
           <wxc-cell @wxcCellClicked="discountCellClicked(i)" :has-arrow="false" :cell-style="cellStyle" :has-top-border="false" :has-bottom-border="false" :has-margin="false" :auto-accessible="false">
@@ -143,13 +147,16 @@ export default {
     discountPageSize: 20,
     my: {
       nickname: "我是昵称",
-      userLoginId: 0
+      userLoginId: 0,
+      userToken: ""
     },
     discountTopStyle: { visibility: "hidden" },
     discountClientLng: 0,
     discountClientLat: 0,
     discountCityCode: "",
     discountRealUserLoginId: 0,
+    refreshing: false,
+    refreshText: "下拉刷新",
     userToken: "",
     main: {
       keywords: "",
@@ -162,7 +169,7 @@ export default {
       pageSize: 20
     }
   }),
-  beforeCreate(){
+  beforeCreate() {
     setPageTitle("首页");
   },
   created() {
@@ -295,6 +302,7 @@ export default {
           console.log("加载my tab后", user);
           this.my.nickname = user.userNickName;
           this.my.userLoginId = user.userLoginId;
+          this.my.userToken = user.userToken;
         },
         error => {
           this.my.userLoginId = 0;
@@ -385,7 +393,9 @@ export default {
       http({
         method: "POST",
         url: "/user/logout",
-        headers: {},
+        headers: {
+          token: this.my.userToken
+        },
         body: {
           userLoginId: this.my.userLoginId
         }
@@ -393,6 +403,10 @@ export default {
         function(data) {
           console.log("success", data);
           if (data.code != 200) {
+            modal.toast({
+              message: data.msg,
+              duration: 2
+            });
             return;
           }
           storage.removeItem("way:user", event => {});
@@ -572,6 +586,25 @@ export default {
     },
     discountExpireOnCompleted(i) {
       this.discountList.splice(i, 1);
+    },
+    discountOnRefresh() {
+      this.refreshing = true;
+      console.log("refresh");
+      this.refreshText = "加载中";
+
+      this.discountPageNum = 1;
+      this.discountList.splice(0, this.discountList.length);
+      this.fetchDiscount();
+    },
+    onpullingdown(event) {
+      this.refreshing = true;
+      this.refreshText = "下拉加载";
+      console.log(
+        "pulling down",
+        event.pullingDistance,
+        event.dy,
+        event.viewHeight
+      );
     }
   }
 };
