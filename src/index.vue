@@ -588,7 +588,7 @@ export default {
       this.discountList.splice(i, 1);
     },
     discountOnRefresh() {
-      this.refreshing = true;
+      // this.refreshing = true;
       console.log("refresh");
       this.refreshText = "加载中";
 
