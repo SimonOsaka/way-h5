@@ -7,12 +7,26 @@
       <div>
         <wxc-cell :has-arrow="false" :has-bottom-border="true" :cell-style="cellStyle">
           <div slot="label">
+            <div style="flex-direction:row;">
+              <text class="c_money" style="font-size:32px; padding-top: 14px;">¥</text>
+              <text class="c_money" style="font-size:48px;">{{discountObj.lPrice}}</text>
+              <text class="c_money" style="font-size:32px; padding-top: 14px;">{{discountObj.rPrice}}</text>
+            </div>
+          </div>
+          <div slot="value" v-if="discountObj.cExpireMills">
+            <div style="flex-direction: row;">
+              <text style="color: red; font-size: 24px; font-weight: bold;">距结束</text>
+              <wxc-countdown :time="discountObj.cExpireMills" tpl="{h}:{m}:{s}" @wxcOnComplete="expiredOnCompleted" :style="{marginLeft: '10px', marginRight: '0'}" :timeBoxStyle="{backgroundColor: 'transparent', width:'auto'}" :timeTextStyle="{fontSize: '24px', color: 'red'}" :dotBoxStyle="{width: 'auto'}" :dotTextStyle="{fontSize: '24px', color: 'red'}">
+              </wxc-countdown>
+            </div>
+          </div>
+        </wxc-cell>
+      </div>
+      <div>
+        <wxc-cell :has-arrow="false" :has-bottom-border="true" :cell-style="cellStyle">
+          <div slot="label">
             <div style="flex-direction: row;">
               <text style="width: 420px; word-wrap: break-word;">{{discountObj.cName}}</text>
-            </div>
-            <div style="flex-direction:row;">
-              <text class="c_money" style="font-size:20px; padding-top:6px;">¥</text>
-              <text class="c_money">{{discountObj.cPrice}}</text>
             </div>
           </div>
           <div slot="value" style="flex-direction: row;">
@@ -64,11 +78,25 @@
     </wxc-popup>
 
     <wxc-dialog title="功能开发中" content="请使用当前App的微信分享功能" :show="show" :single="true" @wxcDialogConfirmBtnClicked="wxcDialogConfirmBtnClicked"></wxc-dialog>
+
+    <wxc-mask height="80" width="240" border-radius="5" duration="200" mask-bg-color="#FFFFFF" :has-animation="false" :has-overlay="true" :show-close="false" :show="expiredShow">
+      <div style="flex-direction: row; justify-content: center; align-items: center; padding-top: 5px;">
+        <text class="iconfont" style="font-size: 64px;">&#xe65f;</text>
+        <text style="font-size: 32px;">优惠已结束</text>
+      </div>
+    </wxc-mask>
   </div>
 </template>
 
 <script>
-import { Utils, WxcCell, WxcPopup, WxcDialog } from "weex-ui";
+import {
+  Utils,
+  WxcCell,
+  WxcPopup,
+  WxcDialog,
+  WxcCountdown,
+  WxcMask
+} from "weex-ui";
 import {
   getEntryUrl,
   receiveMessage,
@@ -86,7 +114,7 @@ const navigator = weex.requireModule("navigator");
 const modal = weex.requireModule("modal");
 
 export default {
-  components: { WxcCell, WxcPopup, WxcDialog },
+  components: { WxcCell, WxcPopup, WxcDialog, WxcCountdown, WxcMask },
   data: () => ({
     cellStyle: { height: "auto" },
     secondCellStyle: { paddingTop: "0" },
@@ -106,7 +134,8 @@ export default {
     isAutoShow: false,
     show: false,
     realUserLoginId: 0,
-    realUserToken: ""
+    realUserToken: "",
+    expiredShow: false
   }),
   beforeCreate() {
     initIconfont();
@@ -185,7 +214,17 @@ export default {
           let discountDetail = data.data;
           _this.discountObj.id = discountDetail.id;
           _this.discountObj.cName = discountDetail.commodityName;
-          _this.discountObj.cPrice = discountDetail.commodityPrice;
+          if (discountDetail.commodityPrice) {
+            let strPrice = discountDetail.commodityPrice.toString();
+            let dotPos = strPrice.indexOf(".");
+            if (dotPos != -1) {
+              _this.discountObj.lPrice = strPrice.slice(0, dotPos);
+              _this.discountObj.rPrice = strPrice.slice(dotPos);
+            } else {
+              _this.discountObj.lPrice = strPrice;
+            }
+            // _this.discountObj.cPrice = discountDetail.commodityPrice;
+          }
           _this.discountObj.position = discountDetail.shopPosition;
           _this.discountObj.cCate = discountDetail.commodityCate;
           _this.discountObj.staticMapUrl = discountDetail.staticMapUrl;
@@ -193,6 +232,7 @@ export default {
           _this.discountObj.shopLat = discountDetail.shopLat;
           _this.discountObj.commodityImageUrl =
             discountDetail.commodityImageUrl;
+          _this.discountObj.cExpireMills = discountDetail.limitTimeExpireMills;
           _this.discountObj.commodityReal = discountDetail.commodityReal;
           _this.discountObj.commodityUnreal = discountDetail.commodityUnreal;
           _this.discountObj.realType = discountDetail.realType;
@@ -316,6 +356,10 @@ export default {
             "&key=e318d250a2b4d53d864f7d712cc069da";
         }
       );
+    },
+    expiredOnCompleted() {
+      console.log("优惠已结束");
+      this.expiredShow = true;
     }
   }
 };

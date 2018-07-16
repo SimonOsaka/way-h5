@@ -53,13 +53,6 @@
                 <text class="c_money">{{discountObj.cPrice}}</text>
               </div>
               <div :key="i" :index="i" style="flex-direction:column; padding-left: 20px; padding-top: 20px;">
-                <div style="flex-direction: row; justify-content: flex-end;">
-                  <div style="text-align: right; flex-direction: row;" v-if="discountObj.cExpireMills">
-                    <wxc-countdown :time="discountObj.cExpireMills" tpl="{d}天{h}时{m}分{s}秒" @wxcOnComplete="discountExpireOnCompleted(i)" :timeBoxStyle="{backgroundColor: 'transparent', width: '40px'}" :timeTextStyle="{color: 'red'}" :dotTextStyle="{color: '#CCCCCC'}">
-                    </wxc-countdown>
-                    <text style="color: #CCCCCC; font-size: 18px; font-weight: bold; margin-left: -11px;">后失效</text>
-                  </div>
-                </div>
                 <div style="flex-direction:row;flex: 1 1 0%; padding-top: 10px;">
                   <text class="iconfont red">&#xe651;</text>
                   <text class="c_real" style="color: #ccc;">{{discountObj.position}}</text>
@@ -106,14 +99,7 @@
 </template>
 
 <script>
-import {
-  WxcSearchbar,
-  Utils,
-  WxcTabBar,
-  WxcCell,
-  WxcButton,
-  WxcCountdown
-} from "weex-ui";
+import { WxcSearchbar, Utils, WxcTabBar, WxcCell, WxcButton } from "weex-ui";
 import {
   getEntryUrl,
   postMessage,
@@ -134,7 +120,7 @@ const modal = weex.requireModule("modal");
 const dom = weex.requireModule("dom");
 
 export default {
-  components: { WxcSearchbar, WxcTabBar, WxcCell, WxcButton, WxcCountdown },
+  components: { WxcSearchbar, WxcTabBar, WxcCell, WxcButton },
   data: () => ({
     city: "",
     cellStyle: { backgroundColor: "#ffffff" },
@@ -584,9 +570,10 @@ export default {
         });
       }
     },
-    discountExpireOnCompleted(i) {
-      this.discountList.splice(i, 1);
-    },
+    // discountExpireOnCompleted(i) {
+    //   console.log("优惠过期", i);
+    //   this.discountList.splice(i, 1);
+    // },
     discountOnRefresh() {
       // this.refreshing = true;
       console.log("refresh");
