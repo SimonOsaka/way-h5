@@ -2,6 +2,9 @@
   <div>
     <scroller class="scroller">
       <div>
+        <wxc-noticebar type="info" notice="亲情提示：请以实物为准" mode="closable"></wxc-noticebar>
+      </div>
+      <div>
         <image class="image" resize="cover" :src="discountObj.commodityImageUrl"></image>
       </div>
       <div>
@@ -95,7 +98,8 @@ import {
   WxcPopup,
   WxcDialog,
   WxcCountdown,
-  WxcMask
+  WxcMask,
+  WxcNoticebar
 } from "weex-ui";
 import {
   getEntryUrl,
@@ -114,7 +118,14 @@ const navigator = weex.requireModule("navigator");
 const modal = weex.requireModule("modal");
 
 export default {
-  components: { WxcCell, WxcPopup, WxcDialog, WxcCountdown, WxcMask },
+  components: {
+    WxcCell,
+    WxcPopup,
+    WxcDialog,
+    WxcCountdown,
+    WxcMask,
+    WxcNoticebar
+  },
   data: () => ({
     cellStyle: { height: "auto" },
     secondCellStyle: { paddingTop: "0" },

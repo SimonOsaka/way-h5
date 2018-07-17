@@ -5,7 +5,7 @@
       <div class="title">
         <text class="title_text">登录页面</text>
       </div>
-      <div class="content">
+      <div class="content" v-if="loginTab == 0">
         <div>
           <input type="tel" maxlength="11" return-key-type="done" @input="userTelOninput" style="width: 702px;" class="input" placeholder="手机号" />
         </div>
@@ -14,9 +14,20 @@
           <wxc-button :text="btnGetValidCodeText" type="white" :btnStyle="{width: '341px',marginLeft: '10px'}" :disabled="btnGetValidCodeDisabled" @wxcButtonClicked="userValidCodeClicked"></wxc-button>
         </div>
       </div>
+      <div class="content" v-else>
+        <div>
+          <input type="text" maxlength="16" return-key-type="done" @input="userNameOninput" style="width: 702px;" class="input" placeholder="用户名" />
+        </div>
+        <div style="flex-direction: row; margin-top: 20px;">
+          <input type="password" maxlength="16" return-key-type="go" style="width: 702px; " @input="userPasswordOninput" class="input" placeholder="密码" />
+        </div>
+      </div>
 
-      <div style="align-items:center; margin-top: 20px;">
-        <wxc-button type="blue" text="登录" @wxcButtonClicked="userLoginClicked"></wxc-button>
+      <div style="align-items:center; margin-top: 20px;" v-if="loginTab == 0">
+        <wxc-button type="blue" text="登录" @wxcButtonClicked="userTelLoginClicked"></wxc-button>
+      </div>
+      <div style="align-items:center; margin-top: 20px;" v-else>
+        <wxc-button type="blue" text="登录" @wxcButtonClicked="userNameLoginClicked"></wxc-button>
       </div>
 
       <div style="flex-direction: row; margin-top: 20px; justify-content: center;">
@@ -46,18 +57,22 @@ import { http } from "../../tools/http.js";
 import category from "../../components/category.vue";
 const navigator = weex.requireModule("navigator");
 const storage = weex.requireModule("storage");
+const modal = weex.requireModule("modal");
 
 export default {
   components: { WxcButton, WxcDialog },
   data: () => ({
     userTel: "",
     userValidCode: "",
+    userName: "",
+    userPasword: "",
     btnGetValidCodeText: "获取验证码",
     btnGetValidCodeDisabled: false,
     btnGetValidCodeDisabledTime: 120,
 
     dialogContent: "",
-    dialogShow: false
+    dialogShow: false,
+    loginTab: 1
   }),
   beforeCreate() {
     initIconfont();
@@ -67,6 +82,14 @@ export default {
     userTelOninput: function(event) {
       this.userTel = event.value;
       console.log("oninput", event.value);
+    },
+    userNameOninput(event) {
+      this.userName = event.value;
+      console.log("userName", this.userName);
+    },
+    userPasswordOninput() {
+      this.userPasword = event.value;
+      console.log("userPasword", this.userPasword);
     },
     userValidCodeOninput: function(event) {
       this.userValidCode = event.value;
@@ -124,7 +147,7 @@ export default {
         }
       }, 1000);
     },
-    userLoginClicked(e) {
+    userTelLoginClicked(e) {
       if (isEmpty(this.userTel) || isEmpty(this.userValidCode)) {
         return;
       } else {
@@ -198,6 +221,67 @@ export default {
         url: getEntryUrl("views/user/agreements"),
         animated: true
       });
+    },
+    userNameLoginClicked() {
+      if (isEmpty(this.userName) || isEmpty(this.userPasword)) {
+        modal.toast({
+          message: "用户名和密码必须填写",
+          duration: 1.5
+        });
+        return;
+      }
+
+      let _this = this;
+      http({
+        method: "POST",
+        url: "/user/signin",
+        headers: {},
+        body: {
+          userLoginName: this.userName,
+          userLoginPassword: this.userPasword
+        }
+      }).then(
+        function(data) {
+          console.log("success", data);
+          if (data.code != 200) {
+            _this.dialogContent = data.msg;
+            _this.dialogShow = true;
+            return;
+          }
+
+          modalDebug(JSON.stringify(data));
+
+          let userProfile = data.data;
+          setStorageVal(
+            "way:user",
+            JSON.stringify({
+              userLoginId: userProfile.userLoginId,
+              userNickName: userProfile.userNickName,
+              userToken: userProfile.token
+            })
+          ).then(
+            data => {
+              modalDebug("setStorageVal");
+              let tabIndex = getUrlKey("tabIndex");
+              postMessage("way:tab:selectedIndex", tabIndex ? tabIndex : 0);
+              navigator.pop({
+                animated: "true"
+              });
+            },
+            error => {
+              modal.toast({
+                message: error,
+                duration: 3
+              });
+            }
+          );
+        },
+        function(error) {
+          console.error("failure", error);
+        }
+      );
+
+      console.log(this.userTel, this.userValidCode);
     }
   }
 };

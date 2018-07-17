@@ -27,8 +27,9 @@
         </div>
       </scroller>
       <div class="m_cell" v-else>
-        <text class="iconfont" style="font-size:128px; margin-top: 232px; text-align: center; color: #cccccc;">&#xe66f;</text>
-        <text style="font-size:32px; margin-top: 20px; text-align: center; color: #cccccc;"> 没有查询到结果 </text>
+        <text v-if="main.needLocation == false" class="iconfont" style="font-size:128px; margin-top: 232px; text-align: center; color: #cccccc;">&#xe66f;</text>
+        <text v-if="main.needLocation == true" class="iconfont" style="font-size:128px; margin-top: 232px; text-align: center; color: #cccccc;">&#xe651;</text>
+        <text style="font-size:32px; margin-top: 20px; text-align: center; color: #cccccc;">{{main.noDataTip}}</text>
       </div>
     </div>
     <div class="item-container" :style="contentStyle">
@@ -148,6 +149,8 @@ export default {
       keywords: "",
       queryList: [],
       queryListNoDataShow: false,
+      noDataTip: "",
+      needLocation: false,
       clientLng: 0,
       clientLat: 0,
       cityCode: "",
@@ -179,6 +182,10 @@ export default {
       data => {
         let cityObj = JSON.parse(data);
         modalDebug("返回城市对象", data);
+        this.main.queryListNoDataShow = false;
+        this.main.noDataTip = "没有查询到结果";
+        this.main.needLocation = false;
+
         this.city = cityObj.name;
         this.main.clientLng = cityObj.lng;
         this.main.clientLat = cityObj.lat;
@@ -186,6 +193,9 @@ export default {
         this.searchbarHttp();
       },
       err => {
+        this.main.queryListNoDataShow = true;
+        this.main.noDataTip = "我需要你的位置信息";
+        this.main.needLocation = true;
         this.city = "定位中...";
       }
     );

@@ -29,15 +29,16 @@
       </div>
 
       <div style="align-items:center; padding-top: 20px;">
-        <wxc-button type="white" text="发布" @wxcButtonClicked="createDiscountClicked"></wxc-button>
+        <wxc-button type="white" text="发布" :disabled="btnDisabled" @wxcButtonClicked="createDiscountClicked"></wxc-button>
       </div>
     </scroller>
 
+    <wxc-loading :show="isShow" type="default" :need-mask="true" loading-text="提交中" @wxcLoadingMaskClicked="maskClicked"></wxc-loading>
   </div>
 </template>
 
 <script>
-import { Utils, WxcGridSelect, WxcButton, WxcCell } from "weex-ui";
+import { Utils, WxcGridSelect, WxcButton, WxcCell, WxcLoading } from "weex-ui";
 import {
   getEntryUrl,
   postMessage,
@@ -57,7 +58,7 @@ const navigator = weex.requireModule("navigator");
 const modal = weex.requireModule("modal");
 
 export default {
-  components: { WxcGridSelect, category, WxcButton, WxcCell },
+  components: { WxcGridSelect, category, WxcButton, WxcCell, WxcLoading },
   data: () => ({
     commodityName: "",
     commodityPrice: "",
@@ -81,7 +82,9 @@ export default {
       { title: "一星期", day: 7 }
     ],
     expireDays: 1,
-    cityCode: ""
+    cityCode: "",
+    isShow: false,
+    btnDisabled: false
   }),
   beforeCreate() {
     initIconfont();
@@ -169,6 +172,11 @@ export default {
       this.clientLat = location[1];
     },
     createDiscountClicked(e) {
+      console.log(e);
+      console.log("按钮禁用？", this.btnDisabled, "组件禁用？", e.disabled);
+      if (e.disabled == true) {
+        return;
+      }
       if (
         isEmpty(this.commodityName) ||
         isEmpty(this.commodityPrice) ||
@@ -204,6 +212,8 @@ export default {
 
       let _this = this;
       getStorageVal("way:user").then(data => {
+        this.isShow = true;
+        this.btnDisabled = true;
         let user = JSON.parse(data);
         http({
           method: "POST",
@@ -225,26 +235,37 @@ export default {
         }).then(
           function(data) {
             if (data.code != 200) {
+              _this.isShow = false;
+              _this.btnDisabled = false;
               modal.toast({
                 message: data.msg,
                 duration: 2
               });
               return;
             }
+
+            _this.isShow = false;
+
             modal.toast({
-              message: "发布成功",
-              duration: 1
+              message: "提交成功",
+              duration: 2
             });
 
-            postMessage("way:tab:selectedIndex", 1);
-            navigator.pop();
+            let lateTimeout = setTimeout(() => {
+              clearTimeout(lateTimeout);
+              postMessage("way:tab:selectedIndex", 1);
+              navigator.pop();
+            }, 2000);
           },
           function(error) {
             console.error("failure", error);
+            _this.isShow = false;
+            _this.btnDisabled = false;
           }
         );
       });
-    }
+    },
+    maskClicked() {}
   }
 };
 </script>

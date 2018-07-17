@@ -1,7 +1,7 @@
 <template>
   <div class="container">
     <scroller class="scroller">
-      <wxc-searchbar ref="wxc-searchbar" placeholder="请输入地址" :always-show-cancel="alwaysShowCancel" :return-key-type="returnKeyType" @wxcSearchbarInputReturned="wxcSearchbarInputOnInput"></wxc-searchbar>
+      <wxc-searchbar ref="wxc-searchbar" placeholder="请输入您所在的位置（例如：xx市xx区xx街）" :always-show-cancel="alwaysShowCancel" :return-key-type="returnKeyType" @wxcSearchbarInputReturned="wxcSearchbarInputOnInput"></wxc-searchbar>
       <div v-if="currentAddress != ''">
         <category title="当前地址"></category>
         <wxc-cell :title="currentAddress" :has-arrow="false" :has-top-border="true">
