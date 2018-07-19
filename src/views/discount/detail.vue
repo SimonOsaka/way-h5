@@ -2,24 +2,24 @@
   <div>
     <scroller class="scroller">
       <div>
-        <wxc-noticebar type="info" notice="亲情提示：请以实物为准" mode="closable"></wxc-noticebar>
+        <wxc-noticebar type="info" notice="亲情提示：此图非实物，请以实物为准。" mode="closable"></wxc-noticebar>
       </div>
       <div>
         <image class="image" resize="cover" :src="discountObj.commodityImageUrl"></image>
       </div>
       <div>
-        <wxc-cell :has-arrow="false" :has-bottom-border="true" :cell-style="cellStyle">
+        <wxc-cell :has-arrow="false" :has-bottom-border="true" :cell-style="priceCellStyle">
           <div slot="label">
             <div style="flex-direction:row;">
-              <text class="c_money" style="font-size:32px; padding-top: 14px;">¥</text>
-              <text class="c_money" style="font-size:48px;">{{discountObj.lPrice}}</text>
-              <text class="c_money" style="font-size:32px; padding-top: 14px;">{{discountObj.rPrice}}</text>
+              <text style="font-size:48px; padding-top: 32px; color: #ffffff;">¥</text>
+              <text style="font-size:84px; color: #ffffff;">{{discountObj.lPrice}}</text>
+              <text style="font-size:48px; padding-top: 32px; color: #ffffff;">{{discountObj.rPrice}}</text>
             </div>
           </div>
-          <div slot="value" v-if="discountObj.cExpireMills">
-            <div style="flex-direction: row;">
-              <text style="color: red; font-size: 24px; font-weight: bold;">距结束</text>
-              <wxc-countdown :time="discountObj.cExpireMills" tpl="{h}:{m}:{s}" @wxcOnComplete="expiredOnCompleted" :style="{marginLeft: '10px', marginRight: '0'}" :timeBoxStyle="{backgroundColor: 'transparent', width:'auto'}" :timeTextStyle="{fontSize: '24px', color: 'red'}" :dotBoxStyle="{width: 'auto'}" :dotTextStyle="{fontSize: '24px', color: 'red'}">
+          <div slot="value" v-if="discountObj.cExpireMills" style="background-color: #fdee7f; height: 106px; width: 180px;">
+            <div style="flex-direction: column; align-items: center; margin-top: 18px;">
+              <text style="color: #9e495b; font-size: 24px;">距结束仅剩</text>
+              <wxc-countdown :time="discountObj.cExpireMills" tpl="{h}:{m}:{s}" @wxcOnComplete="expiredOnCompleted" :style="{marginLeft: '10px', marginRight: '0', marginTop: '5px'}" :timeBoxStyle="{backgroundColor: '#690b08', borderRadius: '6px', width:'auto', paddingLeft:'2px', paddingRight: '2px'}" :timeTextStyle="{fontSize: '24px', color: '#fff'}" :dotBoxStyle="{width: 'auto'}" :dotTextStyle="{fontSize: '24px', color: 'grey', paddingLeft:'2px', paddingRight: '2px'}">
               </wxc-countdown>
             </div>
           </div>
@@ -34,22 +34,22 @@
           </div>
           <div slot="value" style="flex-direction: row;">
             <div style="flex-direction: column; margin-left: 10px;" v-if="discountReal.highlight == 'real'" @click="clickDecreaseReal()">
-              <text class="iconfont" style="font-size: 42px; color: red;">&#xe7f2;</text>
-              <text style="font-size: 22px; color: red; text-align: center;">{{discountReal.real}}</text>
+              <text class="iconfont" style="font-size: 42px; color: #E61414;">&#xe7f2;</text>
+              <text style="font-size: 22px; color: #E61414; text-align: center;">{{discountReal.real}}</text>
             </div>
             <div style="flex-direction: column; margin-left: 10px;" v-else @click="clickIncreaseReal()">
               <text class="iconfont" style="font-size: 42px;">&#xe7f2;</text>
               <text style="font-size: 22px; text-align: center;">{{discountReal.real}}</text>
             </div>
             <div style="flex-direction: column; margin-left: 50px;" v-if="discountReal.highlight == 'unreal'" @click="clickDecreaseUnreal()">
-              <text class="iconfont" style="font-size: 42px; color: red;">&#xe846;</text>
-              <text style="font-size: 22px; color: red; text-align: center;">{{discountReal.unreal}}</text>
+              <text class="iconfont" style="font-size: 42px; color: #E61414;">&#xe846;</text>
+              <text style="font-size: 22px; color: #E61414; text-align: center;">{{discountReal.unreal}}</text>
             </div>
             <div style="flex-direction: column; margin-left: 50px;" v-else @click="clickIncreaseUnreal()">
               <text class="iconfont" style="font-size: 42px;">&#xe846;</text>
               <text style="font-size: 22px; text-align: center;">{{discountReal.unreal}}</text>
             </div>
-            <div style="flex-direction: column; margin-left: 50px;" @click="popupOverlayClicked">
+            <div style="flex-direction: column; margin-left: 50px;" @click="shareClicked">
               <text class="iconfont" style="font-size: 42px;">&#xe6f3;</text>
               <text style="font-size: 22px;">分享</text>
             </div>
@@ -86,6 +86,14 @@
       <div style="flex-direction: row; justify-content: center; align-items: center; padding-top: 5px;">
         <text class="iconfont" style="font-size: 64px;">&#xe65f;</text>
         <text style="font-size: 32px;">优惠已结束</text>
+      </div>
+    </wxc-mask>
+
+    <wxc-mask height="100" :top="24" border-radius="0" duration="200" mask-bg-color="transparent" :has-animation="true" :has-overlay="true" :show-close="false" :show="weixinShow" @wxcMaskSetHidden="weixinMaskSetHidden">
+      <div style="flex-direction: column; align-items: flex-end; position: absolute; top: 25px; right: 25px;">
+        <text class="iconfont" style="font-size: 64px; color: #fff;">&#xe728;</text>
+        <text class="iconfont" style="font-size: 48px;color: #fff;"> 请点击右上角的&#xe684;</text>
+        <text style="color: #fff;font-size: 48px;">进行分享</text>
       </div>
     </wxc-mask>
   </div>
@@ -127,6 +135,13 @@ export default {
     WxcNoticebar
   },
   data: () => ({
+    priceCellStyle: {
+      height: "106px",
+      backgroundColor: "#E61414",
+      paddingTop: "10px",
+      paddingBottom: "10px",
+      paddingRight: 0
+    },
     cellStyle: { height: "auto" },
     secondCellStyle: { paddingTop: "0" },
     discountObj: {
@@ -146,7 +161,8 @@ export default {
     show: false,
     realUserLoginId: 0,
     realUserToken: "",
-    expiredShow: false
+    expiredShow: false,
+    weixinShow: false
   }),
   beforeCreate() {
     initIconfont();
@@ -189,12 +205,17 @@ export default {
     popupOverlayAutoClick() {
       this.isAutoShow = false;
     },
-    popupOverlayClicked() {
+    shareClicked() {
       this.isAutoShow = true;
     },
     weixinClicked() {
       console.log("weixin clicked...");
-      this.show = true;
+      let userAgent = window.navigator.userAgent;
+      if (userAgent.indexOf("MicroMessenger") != -1) {
+        this.weixinShow = true;
+      } else {
+        this.show = true;
+      }
     },
     wxcDialogConfirmBtnClicked() {
       this.show = false;
@@ -371,6 +392,9 @@ export default {
     expiredOnCompleted() {
       console.log("优惠已结束");
       this.expiredShow = true;
+    },
+    weixinMaskSetHidden() {
+      this.weixinShow = false;
     }
   }
 };
