@@ -154,7 +154,9 @@ export function receiveMessage(key, success) {
       console.log('receiveMessage', 'web in...')
       // var t = setTimeout(function () {
       storage.getItem(key, function (e) {
-        console.log("获取消息receiveMessage方法", key, e)
+        console.log("***********************************")
+        console.log("* 获取消息receiveMessage方法", key, e)
+        console.log("***********************************")
         if (e.result == 'success') {
           data.val = e.data;
           data.status = 0;
