@@ -170,35 +170,17 @@ export default {
     //   },
     //   error => {}
     // );
-    receiveMessage("way:tab:selectedIndex", data => {
+    receiveMessage("way:tab:selectedIndex", (data )=> {
       console.log("接收消息selectedIndex", data);
       if (data.val) {
         let index = data.val;
         this.switchTabContent(index);
         this.$refs["wxc-tab-bar"].setPage(index);
+        return;
       }
-    });
-    getStorageVal("way:city").then(
-      data => {
-        let cityObj = JSON.parse(data);
-        modalDebug("返回城市对象", data);
-        this.main.queryListNoDataShow = false;
-        this.main.noDataTip = "没有查询到结果";
-        this.main.needLocation = false;
 
-        this.city = cityObj.name;
-        this.main.clientLng = cityObj.lng;
-        this.main.clientLat = cityObj.lat;
-        this.main.cityCode = cityObj.cityCode;
-        this.searchbarHttp();
-      },
-      err => {
-        this.main.queryListNoDataShow = true;
-        this.main.noDataTip = "我需要你的位置信息";
-        this.main.needLocation = true;
-        this.city = "定位中...";
-      }
-    );
+      this.initMainTab();
+    });
 
     const tabPageHeight = Utils.env.getPageHeight();
     // 如果页面没有导航栏，可以用下面这个计算高度的方法
@@ -246,6 +228,29 @@ export default {
     );
   },
   methods: {
+    initMainTab() {
+      getStorageVal("way:city").then(
+        data => {
+          let cityObj = JSON.parse(data);
+          modalDebug("返回城市对象", data);
+          this.main.queryListNoDataShow = false;
+          this.main.noDataTip = "没有查询到结果";
+          this.main.needLocation = false;
+
+          this.city = cityObj.name;
+          this.main.clientLng = cityObj.lng;
+          this.main.clientLat = cityObj.lat;
+          this.main.cityCode = cityObj.cityCode;
+          this.searchbarHttp();
+        },
+        err => {
+          this.main.queryListNoDataShow = true;
+          this.main.noDataTip = "我需要你的位置信息";
+          this.main.needLocation = true;
+          this.city = "定位中...";
+        }
+      );
+    },
     wxcTabBarCurrentTabSelected(e) {
       const index = e.page;
       console.log(index);
