@@ -170,16 +170,19 @@ export default {
     //   },
     //   error => {}
     // );
-    receiveMessage("way:tab:selectedIndex", (data )=> {
+    // alert("外面");
+    receiveMessage("way:tab:selectedIndex").then(data => {
       console.log("接收消息selectedIndex", data);
+      // alert("里面");
       if (data.val) {
+        // alert("tab1");
         let index = data.val;
         this.switchTabContent(index);
         this.$refs["wxc-tab-bar"].setPage(index);
-        return;
+      } else {
+        // alert("tab0");
+        this.initMainTab();
       }
-
-      this.initMainTab();
     });
 
     const tabPageHeight = Utils.env.getPageHeight();
@@ -267,6 +270,7 @@ export default {
         this.loadMyTabContent();
       } else {
         setPageTitle("首页");
+        this.initMainTab();
       }
     },
     loadDiscountTabContent() {

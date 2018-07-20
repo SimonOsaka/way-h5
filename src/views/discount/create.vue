@@ -8,19 +8,17 @@
       </div>
 
       <category title="商品名称"></category>
-      <input type="text" placeholder="请输入名称" class="input" :autofocus=true @input="commodityNameOnchange" />
+      <input type="text" placeholder="输入商品名称" class="input" :autofocus=true @input="commodityNameOnchange" />
 
       <category title="商品价格（元）"></category>
-      <input type="number" placeholder="请输入价格" class="input" :autofocus=true @input="commodityPriceOnchange" />
+      <input type="number" placeholder="输入商品价格" class="input" :autofocus=true @input="commodityPriceOnchange" />
 
       <category title="商家位置"></category>
-      <textarea class="textarea" @input="shopPositionOnchange" :value="shopPosition"></textarea>
       <div>
-        <div @click="inputTipClicked(i)" v-for="(tip, i) in inputTipsList" :key="i" style="flex-direction: column; padding-left: 10px; padding-top:10px;padding-bottom:10px;">
-          <text style="margin-left: 10px;">{{tip.name}}</text>
-          <text style="color: #cccccc;">{{tip.district}}</text>
-        </div>
+        <input type="text" placeholder="输入商家所在地区" class="input" :value="shopPosition" disabled="true"></input>
+        <text class="iconfont" style="font-size: 42px; padding-top: 20px; position: absolute; width: 750px; height: 80px; text-align: right;" @click="openShopPositionMask">&#xe6a3;</text>
       </div>
+      <input type="text" placeholder="输入街道、门牌号" class="input" @input="shopAddressOnchange"></input>
 
       <category title="优惠时间"></category>
       <div class="content">
@@ -34,11 +32,28 @@
     </scroller>
 
     <wxc-loading :show="isShow" type="default" :need-mask="true" loading-text="提交中" @wxcLoadingMaskClicked="maskClicked"></wxc-loading>
+
+    <wxc-mask height="800" width="702" border-radius="0" duration="200" mask-bg-color="#FFFFFF" :has-animation="true" :has-overlay="true" :show-close="true" :show="shopPositionShow" @wxcMaskSetHidden="shopPositionMaskSetHidden">
+      <input type="text" placeholder="输入商家所在地区" class="input" style="width: 702px; border-bottom-width: 1px; border-bottom-color: #ccc;" @input="shopPositionOnchange" :value="shopPosition"></input>
+      <div>
+        <div @click="inputTipClicked(i)" v-for="(tip, i) in inputTipsList" :key="i" style="flex-direction: column; padding-left: 10px; padding-top:10px;padding-bottom:10px;">
+          <text style="margin-left: 10px;">{{tip.name}}</text>
+          <text style="color: #cccccc;">{{tip.district}}</text>
+        </div>
+      </div>
+    </wxc-mask>
   </div>
 </template>
 
 <script>
-import { Utils, WxcGridSelect, WxcButton, WxcCell, WxcLoading } from "weex-ui";
+import {
+  Utils,
+  WxcGridSelect,
+  WxcButton,
+  WxcCell,
+  WxcLoading,
+  WxcMask
+} from "weex-ui";
 import {
   getEntryUrl,
   postMessage,
@@ -58,12 +73,20 @@ const navigator = weex.requireModule("navigator");
 const modal = weex.requireModule("modal");
 
 export default {
-  components: { WxcGridSelect, category, WxcButton, WxcCell, WxcLoading },
+  components: {
+    WxcGridSelect,
+    category,
+    WxcButton,
+    WxcCell,
+    WxcLoading,
+    WxcMask
+  },
   data: () => ({
+    commodityCate: "",
     commodityName: "",
     commodityPrice: "",
     shopPosition: "",
-    commodityCate: "",
+    shopAddress: "",
     cateData: [
       { title: "服装", cate: "clothes" },
       { title: "蔬菜", cate: "vegetables" },
@@ -84,7 +107,8 @@ export default {
     expireDays: 1,
     cityCode: "",
     isShow: false,
-    btnDisabled: false
+    btnDisabled: false,
+    shopPositionShow: false
   }),
   beforeCreate() {
     initIconfont();
@@ -139,6 +163,10 @@ export default {
         this.shopPositionFetch();
       }, 500);
     },
+    shopAddressOnchange(event) {
+      this.shopAddress = event.value;
+      console.log("oninput", event.value);
+    },
     shopPositionFetch() {
       let _this = this;
       http({
@@ -165,6 +193,7 @@ export default {
     },
     inputTipClicked(i) {
       console.log(i);
+      this.shopPositionShow = false;
       this.shopPosition =
         this.inputTipsList[i].district + this.inputTipsList[i].name;
       let location = this.inputTipsList[i].location.split(",");
@@ -181,6 +210,7 @@ export default {
         isEmpty(this.commodityName) ||
         isEmpty(this.commodityPrice) ||
         isEmpty(this.shopPosition) ||
+        isEmpty(this.shopAddress) ||
         isEmpty(this.commodityCate) ||
         this.expireDays < 1
       ) {
@@ -203,6 +233,7 @@ export default {
         this.commodityName,
         this.commodityPrice,
         this.shopPosition,
+        this.shopAddress,
         this.commodityCate,
         this.expireDays,
         this.clientLng,
@@ -225,7 +256,7 @@ export default {
             commodityName: _this.commodityName,
             commodityCate: _this.commodityCate,
             commodityPrice: _this.commodityPrice,
-            shopPosition: _this.shopPosition,
+            shopPosition: _this.shopPosition.concat(_this.shopAddress),
             userLoginId: user.userLoginId,
             clientLat: _this.clientLat,
             clientLng: _this.clientLng,
@@ -254,7 +285,10 @@ export default {
             let lateTimeout = setTimeout(() => {
               clearTimeout(lateTimeout);
               postMessage("way:tab:selectedIndex", 1);
-              navigator.pop();
+              navigator.push({
+                url: getEntryUrl("index"),
+                animated: "true"
+              });
             }, 2000);
           },
           function(error) {
@@ -265,7 +299,13 @@ export default {
         );
       });
     },
-    maskClicked() {}
+    maskClicked() {},
+    shopPositionMaskSetHidden() {
+      this.shopPositionShow = false;
+    },
+    openShopPositionMask() {
+      this.shopPositionShow = true;
+    }
   }
 };
 </script>
@@ -305,5 +345,10 @@ export default {
 }
 .c_real {
   font-size: 24px;
+}
+input:disabled {
+  background-color: white;
+  border-bottom-color: #ccc;
+  border-bottom-width: 1px;
 }
 </style>

@@ -246,7 +246,7 @@ export default {
           let discountDetail = data.data;
           _this.discountObj.id = discountDetail.id;
           _this.discountObj.cName = discountDetail.commodityName;
-          if (discountDetail.commodityPrice) {
+          if (discountDetail.commodityPrice >= 0) {
             let strPrice = discountDetail.commodityPrice.toString();
             let dotPos = strPrice.indexOf(".");
             if (dotPos != -1) {
@@ -254,6 +254,7 @@ export default {
               _this.discountObj.rPrice = strPrice.slice(dotPos);
             } else {
               _this.discountObj.lPrice = strPrice;
+              console.log("商品价格", _this.discountObj.lPrice);
             }
             // _this.discountObj.cPrice = discountDetail.commodityPrice;
           }

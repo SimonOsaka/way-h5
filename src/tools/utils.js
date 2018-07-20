@@ -132,8 +132,8 @@ export function postMessage(key, val) {
   if (whichPlatform() === 'web') {
     const storage = weex.requireModule('storage');
     storage.setItem(key, val, (e) => {
-      if (e.result == 'success' && e.data == undefined) {
-        console.debug(e);
+      console.info("发送消息", key, val, e);
+      if (e.result == 'success' && e.data == 'undefined') {
         return true;
       } else {
         return false;
@@ -142,27 +142,33 @@ export function postMessage(key, val) {
   }
 }
 
-export function receiveMessage(key, callback) {
+export function receiveMessage(key, success) {
   var data = {
     status: 1,
     val: undefined
   };
-  //web
-  if (whichPlatform() === 'web') {
-    const storage = weex.requireModule('storage');
-    var interval = setInterval(function () {
-      storage.getItem(key, (e) => {
+  return new Promise(function (resolve, reject) {
+    //web
+    if (whichPlatform() === 'web') {
+      let storage = weex.requireModule('storage');
+      console.log('receiveMessage', 'web in...')
+      // var t = setTimeout(function () {
+      storage.getItem(key, function (e) {
+        console.log("获取消息receiveMessage方法", key, e)
         if (e.result == 'success') {
           data.val = e.data;
           data.status = 0;
-          storage.removeItem(key);
+          storage.removeItem(key, function (r) {
+            resolve(data);
+          });
+        } else {
+          resolve(data);
         }
       });
-      console.debug(data);
-      clearInterval(interval);
-      callback(data);
-    }, 10);
-  }
+      // clearTimeout(t);
+      // }, 10);
+    }
+  });
 }
 
 export function modalDebug(info = '') {
