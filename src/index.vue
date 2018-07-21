@@ -146,6 +146,7 @@ export default {
     refreshText: "下拉刷新",
     userToken: "",
     main: {
+      init: false,
       keywords: "",
       queryList: [],
       queryListNoDataShow: false,
@@ -270,7 +271,11 @@ export default {
         this.loadMyTabContent();
       } else {
         setPageTitle("首页");
-        this.initMainTab();
+        console.log('init first tab', this.main.init);
+        if (this.main.init == false) {
+          this.main.init = true;
+          this.initMainTab();
+        }
       }
     },
     loadDiscountTabContent() {
