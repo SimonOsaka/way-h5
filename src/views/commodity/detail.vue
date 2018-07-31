@@ -6,7 +6,7 @@
       </div>
       <div style="margin-top: 10px;">
         <wxc-cell :has-arrow="false" :has-bottom-border="true" :cell-style="cellStyle">
-          <div slot="label" style="height: auto;">
+          <div slot="label" style="height: 150px;">
             <div style="flex-direction: row;">
               <text style="width: 600px;">{{commodityObj.cName}}</text>
             </div>
@@ -51,7 +51,7 @@
 </template>
 
 <script>
-import { Utils, WxcCell, WxcPopup, WxcDialog } from "weex-ui";
+import { Utils, WxcCell, WxcPopup, WxcDialog } from 'weex-ui'
 import {
   getEntryUrl,
   receiveMessage,
@@ -60,98 +60,100 @@ import {
   getStorageValue,
   initIconfont,
   getStorageVal,
-  setPageTitle
-} from "../../tools/utils.js";
-import { loadCateImageUrl } from "../../tools/image.js";
-import { http } from "../../tools/http.js";
-const navigator = weex.requireModule("navigator");
-const modal = weex.requireModule("modal");
+  setPageTitle,
+  setOgImage,
+  getUrlKey
+} from '../../tools/utils.js'
+import { loadCateImageUrl } from '../../tools/image.js'
+import { http } from '../../tools/http.js'
+const navigator = weex.requireModule('navigator')
+const modal = weex.requireModule('modal')
 
 export default {
   components: { WxcCell, WxcPopup, WxcDialog },
   data: () => ({
-    cellStyle: { height: "auto" },
+    cellStyle: { height: 'auto' },
     commodityObj: {
       id: 0,
-      cPicUrl: "",
-      cName: "",
-      cPrice: "",
-      cPosition: "",
+      cPicUrl: '',
+      cName: '',
+      cPrice: '',
+      cPosition: '',
       shopId: 0,
-      shopName: "",
-      shopLogoUrl: ""
+      shopName: '',
+      shopLogoUrl: ''
     },
     isAutoShow: false,
     show: false
   }),
   beforeCreate() {
-    initIconfont();
-    setPageTitle("商品详情");
+    initIconfont()
   },
   created() {
-    let _this = this;
-    getStorageVal("way:commodity:id").then(
-      data => {
-        _this.commodityObj.id = data;
+    let _this = this
+    _this.commodityObj.id = getUrlKey('cid')
+    if (!_this.commodityObj.id) {
+      navigator.pop()
+      return
+    }
 
-        http({
-          method: "POST",
-          url: "/commodity/detail",
-          headers: {},
-          body: {
-            commodityId: this.commodityObj.id
-          }
-        }).then(
-          function(data) {
-            console.log("success", data);
-            if (data.code != 200) {
-              _this.dialogContent = data.msg;
-              _this.dialogShow = true;
-            }
-            let commodityDetail = data.data;
-            _this.commodityObj.id = commodityDetail.id;
-            _this.commodityObj.cName = commodityDetail.name;
-            _this.commodityObj.cPrice = commodityDetail.price;
-            _this.commodityObj.cPosition = commodityDetail.shopAddress;
-            _this.commodityObj.cPicUrl = commodityDetail.imgUrl;
-            _this.commodityObj.shopId = commodityDetail.shopId;
-            _this.commodityObj.shopName = commodityDetail.shopName;
-            _this.commodityObj.shopLogoUrl = commodityDetail.shopLogoUrl;
-          },
-          function(error) {
-            console.error("failure", error);
-          }
-        );
-      },
-      e => {
-        navigator.pop();
-        return;
+    console.log('商品详情id', _this.commodityObj.id)
+
+    http({
+      method: 'POST',
+      url: '/commodity/detail',
+      headers: {},
+      body: {
+        commodityId: this.commodityObj.id
       }
-    );
+    }).then(
+      function(data) {
+        console.log('success', data)
+        if (data.code != 200) {
+          _this.dialogContent = data.msg
+          _this.dialogShow = true
+        }
+        let commodityDetail = data.data
+        _this.commodityObj.id = commodityDetail.id
+        _this.commodityObj.cName = commodityDetail.name
+        _this.commodityObj.cPrice = commodityDetail.price
+        _this.commodityObj.cPosition = commodityDetail.shopAddress
+        _this.commodityObj.cPicUrl = commodityDetail.imgUrl
+        _this.commodityObj.shopId = commodityDetail.shopId
+        _this.commodityObj.shopName = commodityDetail.shopName
+        _this.commodityObj.shopLogoUrl = commodityDetail.shopLogoUrl
+
+        setPageTitle(commodityDetail.name)
+        setOgImage(_this.commodityObj.cPicUrl)
+      },
+      function(error) {
+        console.error('failure', error)
+      }
+    )
   },
   methods: {
     popupOverlayAutoClick() {
-      this.isAutoShow = false;
+      this.isAutoShow = false
     },
     popupOverlayClicked() {
-      this.isAutoShow = true;
+      this.isAutoShow = true
     },
     weixinClicked() {
-      console.log("weixin clicked...");
-      this.show = true;
+      console.log('weixin clicked...')
+      this.show = true
     },
     wxcDialogConfirmBtnClicked() {
-      this.show = false;
+      this.show = false
     },
     shopCellClicked() {
-      postMessage("way:shop:id", this.commodityObj.shopId);
+      postMessage('way:shop:id', this.commodityObj.shopId)
       navigator.push({
-        url: getEntryUrl("views/shop/detail"),
-        animated: "true"
-      });
+        url: getEntryUrl('views/shop/detail'),
+        animated: 'true'
+      })
     }
   }
-};
+}
 </script>
 
 <style scoped>

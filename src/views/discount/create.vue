@@ -16,7 +16,7 @@
       <category title="商家位置"></category>
       <div>
         <input type="text" placeholder="输入商家所在地区" class="input" :value="shopPosition" disabled="true"></input>
-        <text class="iconfont" style="font-size: 42px; padding-top: 20px; position: absolute; width: 750px; height: 80px; text-align: right;" @click="openShopPositionMask">&#xe6a3;</text>
+        <text class="iconfont" style="font-size: 42px; padding-top: 20px; position: absolute; top:0; width: 750px; height: 80px; text-align: right;" @click="openShopPositionMask">&#xe6a3;</text>
       </div>
       <input type="text" placeholder="输入街道、门牌号" class="input" @input="shopAddressOnchange"></input>
 
@@ -53,7 +53,7 @@ import {
   WxcCell,
   WxcLoading,
   WxcMask
-} from "weex-ui";
+} from 'weex-ui'
 import {
   getEntryUrl,
   postMessage,
@@ -66,11 +66,11 @@ import {
   setStorageVal,
   getUrlKey,
   setPageTitle
-} from "../../tools/utils.js";
-import { http } from "../../tools/http.js";
-import category from "../../components/category.vue";
-const navigator = weex.requireModule("navigator");
-const modal = weex.requireModule("modal");
+} from '../../tools/utils.js'
+import { http } from '../../tools/http.js'
+import category from '../../components/category.vue'
+const navigator = weex.requireModule('navigator')
+const modal = weex.requireModule('modal')
 
 export default {
   components: {
@@ -82,129 +82,129 @@ export default {
     WxcMask
   },
   data: () => ({
-    commodityCate: "",
-    commodityName: "",
-    commodityPrice: "",
-    shopPosition: "",
-    shopAddress: "",
+    commodityCate: '',
+    commodityName: '',
+    commodityPrice: '',
+    shopPosition: '',
+    shopAddress: '',
     cateData: [
-      { title: "服装", cate: "clothes" },
-      { title: "蔬菜", cate: "vegetables" },
-      { title: "饮料", cate: "drinks" },
-      { title: "零食", cate: "snacks" },
-      { title: "工具", cate: "tools" },
-      { title: "其它", cate: "others" }
+      { title: '服装', cate: 'clothes' },
+      { title: '蔬菜', cate: 'vegetables' },
+      { title: '饮料', cate: 'drinks' },
+      { title: '零食', cate: 'snacks' },
+      { title: '工具', cate: 'tools' },
+      { title: '其它', cate: 'others' }
     ],
     cateAll: {},
     clientLng: 0,
     clientLat: 0,
     inputTipsList: [],
     expireList: [
-      { title: "一天", checked: true, day: 1 },
-      { title: "三天", day: 3 },
-      { title: "一星期", day: 7 }
+      { title: '一天', checked: true, day: 1 },
+      { title: '三天', day: 3 },
+      { title: '一星期', day: 7 }
     ],
     expireDays: 1,
-    cityCode: "",
+    cityCode: '',
     isShow: false,
     btnDisabled: false,
     shopPositionShow: false
   }),
   beforeCreate() {
-    initIconfont();
-    setPageTitle("发布优惠");
+    initIconfont()
+    setPageTitle('发布优惠')
 
-    getStorageVal("way:city").then(
+    getStorageVal('way:city').then(
       data => {
-        let city = JSON.parse(data);
-        this.cityCode = city.cityCode;
+        let city = JSON.parse(data)
+        this.cityCode = city.cityCode
       },
       e => {
         navigator.push({
-          url: getEntryUrl("views/city/index"),
-          animated: "true"
-        });
+          url: getEntryUrl('views/city/index'),
+          animated: 'true'
+        })
       }
-    );
+    )
   },
   methods: {
     onSelect(res, { selectIndex, checked, checkedList }) {
-      console.log(res, selectIndex, checked, checkedList.length);
+      console.log(res, selectIndex, checked, checkedList.length)
       if (checked) {
-        console.log(checkedList[0]);
-        this.commodityCate = this.cateData[selectIndex].cate;
+        console.log(checkedList[0])
+        this.commodityCate = this.cateData[selectIndex].cate
       }
     },
     expireOnSelect(res, { selectIndex, checked, checkedList }) {
-      console.log(res, selectIndex, checked, checkedList.length);
+      console.log(res, selectIndex, checked, checkedList.length)
       if (checked) {
-        console.log(checkedList[0]);
-        this.expireDays = this.expireList[selectIndex].day;
+        console.log(checkedList[0])
+        this.expireDays = this.expireList[selectIndex].day
       }
     },
     commodityNameOnchange: function(event) {
-      this.commodityName = event.value;
-      console.log("onchange", event.value);
+      this.commodityName = event.value
+      console.log('onchange', event.value)
     },
     commodityPriceOnchange: function(event) {
-      this.commodityPrice = event.value;
-      console.log("oninput", event.value);
+      this.commodityPrice = event.value
+      console.log('oninput', event.value)
     },
     shopPositionOnchange: function(event) {
-      this.shopPosition = event.value;
-      console.log("oninput", event.value);
+      this.shopPosition = event.value
+      console.log('oninput', event.value)
 
       if (this.shopPosTimeout) {
-        clearTimeout(this.shopPosTimeout);
+        clearTimeout(this.shopPosTimeout)
       }
 
       this.shopPosTimeout = setTimeout(() => {
-        console.log("0.5秒执行");
-        this.shopPositionFetch();
-      }, 500);
+        console.log('0.5秒执行')
+        this.shopPositionFetch()
+      }, 500)
     },
     shopAddressOnchange(event) {
-      this.shopAddress = event.value;
-      console.log("oninput", event.value);
+      this.shopAddress = event.value
+      console.log('oninput', event.value)
     },
     shopPositionFetch() {
-      let _this = this;
+      let _this = this
       http({
-        method: "POST",
-        url: "/amap/inputtips",
+        method: 'POST',
+        url: '/amap/inputtips',
         headers: {},
         body: {
           keywords: this.shopPosition
         }
       }).then(
         function(data) {
-          console.log("success", data);
+          console.log('success', data)
           if (data.code != 200) {
-            return;
+            return
           }
 
-          _this.inputTipsList = data.data;
-          console.log(_this.inputTipsList);
+          _this.inputTipsList = data.data
+          console.log(_this.inputTipsList)
         },
         function(error) {
-          console.error("failure", error);
+          console.error('failure', error)
         }
-      );
+      )
     },
     inputTipClicked(i) {
-      console.log(i);
-      this.shopPositionShow = false;
+      console.log(i)
+      this.shopPositionShow = false
       this.shopPosition =
-        this.inputTipsList[i].district + this.inputTipsList[i].name;
-      let location = this.inputTipsList[i].location.split(",");
-      this.clientLng = location[0];
-      this.clientLat = location[1];
+        this.inputTipsList[i].district + this.inputTipsList[i].name
+      let location = this.inputTipsList[i].location.split(',')
+      this.clientLng = location[0]
+      this.clientLat = location[1]
     },
     createDiscountClicked(e) {
-      console.log(e);
-      console.log("按钮禁用？", this.btnDisabled, "组件禁用？", e.disabled);
+      console.log(e)
+      console.log('按钮禁用？', this.btnDisabled, '组件禁用？', e.disabled)
       if (e.disabled == true) {
-        return;
+        return
       }
       if (
         isEmpty(this.commodityName) ||
@@ -215,18 +215,18 @@ export default {
         this.expireDays < 1
       ) {
         modal.toast({
-          message: "请填全信息",
+          message: '请填全信息',
           duration: 2
-        });
-        return;
+        })
+        return
       }
 
       if (isEmpty(this.clientLng) || isEmpty(this.clientLat)) {
         modal.toast({
-          message: "请输入并选择商家位置",
+          message: '请输入并选择商家位置',
           duration: 2
-        });
-        return;
+        })
+        return
       }
 
       console.log(
@@ -239,16 +239,16 @@ export default {
         this.clientLng,
         this.clientLat,
         this.cityCode
-      );
+      )
 
-      let _this = this;
-      getStorageVal("way:user").then(data => {
-        this.isShow = true;
-        this.btnDisabled = true;
-        let user = JSON.parse(data);
+      let _this = this
+      getStorageVal('way:user').then(data => {
+        this.isShow = true
+        this.btnDisabled = true
+        let user = JSON.parse(data)
         http({
-          method: "POST",
-          url: "/discount/create",
+          method: 'POST',
+          url: '/discount/create',
           headers: {
             token: user.userToken
           },
@@ -266,48 +266,48 @@ export default {
         }).then(
           function(data) {
             if (data.code != 200) {
-              _this.isShow = false;
-              _this.btnDisabled = false;
+              _this.isShow = false
+              _this.btnDisabled = false
               modal.toast({
                 message: data.msg,
                 duration: 2
-              });
-              return;
+              })
+              return
             }
 
-            _this.isShow = false;
+            _this.isShow = false
 
             modal.toast({
-              message: "提交成功",
+              message: '提交成功',
               duration: 2
-            });
+            })
 
             let lateTimeout = setTimeout(() => {
-              clearTimeout(lateTimeout);
-              postMessage("way:tab:selectedIndex", 1);
+              clearTimeout(lateTimeout)
+              postMessage('way:tab:selectedIndex', 1)
               navigator.push({
-                url: getEntryUrl("index"),
-                animated: "true"
-              });
-            }, 2000);
+                url: getEntryUrl('index'),
+                animated: 'true'
+              })
+            }, 2000)
           },
           function(error) {
-            console.error("failure", error);
-            _this.isShow = false;
-            _this.btnDisabled = false;
+            console.error('failure', error)
+            _this.isShow = false
+            _this.btnDisabled = false
           }
-        );
-      });
+        )
+      })
     },
     maskClicked() {},
     shopPositionMaskSetHidden() {
-      this.shopPositionShow = false;
+      this.shopPositionShow = false
     },
     openShopPositionMask() {
-      this.shopPositionShow = true;
+      this.shopPositionShow = true
     }
   }
-};
+}
 </script>
 
 <style scoped>

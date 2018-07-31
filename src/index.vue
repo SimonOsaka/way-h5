@@ -43,21 +43,19 @@
           <wxc-cell @wxcCellClicked="discountCellClicked(i)" :has-arrow="false" :cell-style="cellStyle" :has-top-border="false" :has-bottom-border="false" :has-margin="false" :auto-accessible="false">
             <image slot="label" class="image" resize="cover" :src="discountObj.commodityImageUrl"></image>
             <div slot="title">
-              <div style="flex-direction: row;">
-                <text class="c_name">{{discountObj.cName}}</text>
+              <div style="flex-direction: row; height: 50px;">
+                <text class="c_name" style="width: 480px;">{{discountObj.cName}}</text>
                 <div style="flex: 1 1 0%; -webkit-box-flex: 1;">
-                  <text style="text-align: right; font-size: 26px; padding-top: 10px;">{{discountObj.mDistance}}</text>
+                  <text style="text-align: right; font-size: 26px; padding-top: 5px;">{{discountObj.mDistance}}</text>
                 </div>
               </div>
-              <div style="flex-direction:row; padding-top: 10px;">
+              <div style="flex-direction:row;">
                 <text class="c_name c_money" style="font-size:20px; padding-top:4px;">¥</text>
                 <text class="c_money">{{discountObj.cPrice}}</text>
               </div>
-              <div :key="i" :index="i" style="flex-direction:column; padding-left: 20px; padding-top: 20px;">
-                <div style="flex-direction:row;flex: 1 1 0%; padding-top: 10px;">
+              <div :key="i" :index="i" style="flex-direction: row; padding-left: 20px; margin-top: 10px;">
                   <text class="iconfont red">&#xe651;</text>
                   <text class="c_real" style="color: #ccc;">{{discountObj.position}}</text>
-                </div>
               </div>
             </div>
           </wxc-cell>
@@ -100,7 +98,7 @@
 </template>
 
 <script>
-import { WxcSearchbar, Utils, WxcTabBar, WxcCell, WxcButton } from "weex-ui";
+import { WxcSearchbar, Utils, WxcTabBar, WxcCell, WxcButton } from 'weex-ui'
 import {
   getEntryUrl,
   postMessage,
@@ -112,19 +110,19 @@ import {
   modalDebug,
   getStorageVal,
   setStorageVal
-} from "./tools/utils.js";
-import tabbarConfig from "./entry/tabbar/config.js";
-import { http } from "./tools/http.js";
-const navigator = weex.requireModule("navigator");
-const storage = weex.requireModule("storage");
-const modal = weex.requireModule("modal");
-const dom = weex.requireModule("dom");
+} from './tools/utils.js'
+import tabbarConfig from './entry/tabbar/config.js'
+import { http } from './tools/http.js'
+const navigator = weex.requireModule('navigator')
+const storage = weex.requireModule('storage')
+const modal = weex.requireModule('modal')
+const dom = weex.requireModule('dom')
 
 export default {
   components: { WxcSearchbar, WxcTabBar, WxcCell, WxcButton },
   data: () => ({
-    city: "",
-    cellStyle: { backgroundColor: "#ffffff" },
+    city: '',
+    cellStyle: { backgroundColor: '#ffffff' },
     tabTitles: tabbarConfig.tabIconFontTitles,
     tabStyles: tabbarConfig.tabIconFontStyles,
     scrollerStyle: {},
@@ -133,37 +131,37 @@ export default {
     discountPageNum: 1,
     discountPageSize: 20,
     my: {
-      nickname: "我是昵称",
+      nickname: '我是昵称',
       userLoginId: 0,
-      userToken: ""
+      userToken: ''
     },
-    discountTopStyle: { visibility: "hidden" },
+    discountTopStyle: { visibility: 'hidden' },
     discountClientLng: 0,
     discountClientLat: 0,
-    discountCityCode: "",
+    discountCityCode: '',
     discountRealUserLoginId: 0,
     refreshing: false,
-    refreshText: "下拉刷新",
-    userToken: "",
+    refreshText: '下拉刷新',
+    userToken: '',
     main: {
       init: false,
-      keywords: "",
+      keywords: '',
       queryList: [],
       queryListNoDataShow: false,
-      noDataTip: "",
+      noDataTip: '',
       needLocation: false,
       clientLng: 0,
       clientLat: 0,
-      cityCode: "",
+      cityCode: '',
       pageNum: 1,
       pageSize: 20
     }
   }),
   beforeCreate() {
-    setPageTitle("首页");
+    setPageTitle('首页')
   },
   created() {
-    initIconfont();
+    initIconfont()
     // getStorageVal("way:tab:selectedIndex").then(
     //   index => {
     //     this.switchTabContent(index);
@@ -172,109 +170,109 @@ export default {
     //   error => {}
     // );
     // alert("外面");
-    receiveMessage("way:tab:selectedIndex").then(data => {
-      console.log("接收消息selectedIndex", data);
+    receiveMessage('way:tab:selectedIndex').then(data => {
+      console.log('接收消息selectedIndex', data)
       // alert("里面");
       if (data.val) {
         // alert("tab1");
-        let index = data.val;
-        this.switchTabContent(index);
-        this.$refs["wxc-tab-bar"].setPage(index);
+        let index = data.val
+        this.switchTabContent(index)
+        this.$refs['wxc-tab-bar'].setPage(index)
       } else {
         // alert("tab0");
-        this.initMainTab();
+        this.initMainTab()
       }
-    });
+    })
 
-    const tabPageHeight = Utils.env.getPageHeight();
+    const tabPageHeight = Utils.env.getPageHeight()
     // 如果页面没有导航栏，可以用下面这个计算高度的方法
     // const tabPageHeight = env.deviceHeight / env.deviceWidth * 750;
-    const { tabStyles } = this;
+    const { tabStyles } = this
     //
-    this.contentStyle = { height: tabPageHeight - tabStyles.height + "px" };
+    this.contentStyle = { height: tabPageHeight - tabStyles.height + 'px' }
     this.mcScrollerStyle = {
-      height: tabPageHeight - tabStyles.height - 84 + "px",
-      width: "750px"
-    };
+      height: tabPageHeight - tabStyles.height - 84 + 'px',
+      width: '750px'
+    }
     this.discountScrollerStyle = {
-      height: tabPageHeight - tabStyles.height + "px",
-      width: "750px"
-    };
+      height: tabPageHeight - tabStyles.height + 'px',
+      width: '750px'
+    }
     this.myScrollerStyle = {
-      height: tabPageHeight - tabStyles.height + "px",
-      width: "750px"
-    };
+      height: tabPageHeight - tabStyles.height + 'px',
+      width: '750px'
+    }
     this.addDiscountStyle = {
-      fontSize: "48px",
-      color: "#999999",
-      borderColor: "#cccccc",
-      borderWidth: "1px",
-      borderStyle: "solid",
-      borderRadius: "50px",
-      width: "64px",
-      height: "64px",
-      backgroundColor: "#ffffff",
-      paddingTop: "7px",
-      paddingLeft: "7px",
+      fontSize: '48px',
+      color: '#999999',
+      borderColor: '#cccccc',
+      borderWidth: '1px',
+      borderStyle: 'solid',
+      borderRadius: '50px',
+      width: '64px',
+      height: '64px',
+      backgroundColor: '#ffffff',
+      paddingTop: '7px',
+      paddingLeft: '7px',
       opacity: 0.9,
-      marginTop: "15px"
-    };
+      marginTop: '15px'
+    }
     this.discountTopStyle = Object.assign(
       this.discountTopStyle,
       this.addDiscountStyle
-    );
+    )
     console.log(
       this.contentStyle,
       this.scrollerStyle,
       this.myScrollerStyle,
       this.addDiscountStyle,
       this.discountTopStyle
-    );
+    )
   },
   methods: {
     initMainTab() {
-      getStorageVal("way:city").then(
+      getStorageVal('way:city').then(
         data => {
-          let cityObj = JSON.parse(data);
-          modalDebug("返回城市对象", data);
-          this.main.queryListNoDataShow = false;
-          this.main.noDataTip = "没有查询到结果";
-          this.main.needLocation = false;
+          let cityObj = JSON.parse(data)
+          modalDebug('返回城市对象', data)
+          this.main.queryListNoDataShow = false
+          this.main.noDataTip = '没有查询到结果'
+          this.main.needLocation = false
 
-          this.city = cityObj.name;
-          this.main.clientLng = cityObj.lng;
-          this.main.clientLat = cityObj.lat;
-          this.main.cityCode = cityObj.cityCode;
-          this.searchbarHttp();
+          this.city = cityObj.name
+          this.main.clientLng = cityObj.lng
+          this.main.clientLat = cityObj.lat
+          this.main.cityCode = cityObj.cityCode
+          this.searchbarHttp()
         },
         err => {
-          this.main.queryListNoDataShow = true;
-          this.main.noDataTip = "我需要你的位置信息";
-          this.main.needLocation = true;
-          this.city = "定位中...";
+          this.main.queryListNoDataShow = true
+          this.main.noDataTip = '我需要你的位置信息'
+          this.main.needLocation = true
+          this.city = '定位中...'
         }
-      );
+      )
     },
     wxcTabBarCurrentTabSelected(e) {
-      const index = e.page;
-      console.log(index);
-      this.switchTabContent(index);
+      const index = e.page
+      console.log(index)
+      this.switchTabContent(index)
     },
     switchTabContent(index) {
-      console.log("switch to index ", index);
+      console.log('switch to index ', index)
       if (index == 1) {
-        setPageTitle("优惠信息");
-        this.loadDiscountTabContent();
+        setPageTitle('优惠信息')
+        this.loadDiscountTabContent()
       } else if (index == 2) {
-        console.log("into my tab");
-        setPageTitle("个人信息");
-        this.loadMyTabContent();
+        console.log('into my tab')
+        setPageTitle('个人信息')
+        this.loadMyTabContent()
       } else {
-        setPageTitle("首页");
-        console.log('init first tab', this.main.init);
+        setPageTitle('首页')
+        console.log('init first tab', this.main.init)
         if (this.main.init == false) {
-          this.main.init = true;
-          this.initMainTab();
+          this.main.init = true
+          this.initMainTab()
         }
       }
     },
@@ -285,72 +283,72 @@ export default {
       ) {
         this.discountTabContentInitTime = new Date(
           new Date().getTime() + 3600 * 1000
-        ).getTime();
+        ).getTime()
 
-        this.discountList.splice(0, this.discountList.length);
-        this.discountPageNum = 1;
-        getStorageVal("way:user").then(
+        this.discountList.splice(0, this.discountList.length)
+        this.discountPageNum = 1
+        getStorageVal('way:user').then(
           data => {
-            let user = JSON.parse(data);
-            console.log("加载discount tab后", user);
+            let user = JSON.parse(data)
+            console.log('加载discount tab后', user)
             // this.discountRealUserLoginId = user.userLoginId;
             // this.userToken = user.userToken;
-            this.fetchDiscount();
+            this.fetchDiscount()
           },
           error => {
-            this.discountRealUserLoginId = 0;
-            this.fetchDiscount();
+            this.discountRealUserLoginId = 0
+            this.fetchDiscount()
           }
-        );
+        )
       }
     },
     loadMyTabContent() {
-      console.log("加载my tab");
-      getStorageVal("way:user").then(
+      console.log('加载my tab')
+      getStorageVal('way:user').then(
         data => {
-          let user = JSON.parse(data);
-          console.log("加载my tab后", user);
-          this.my.nickname = user.userNickName;
-          this.my.userLoginId = user.userLoginId;
-          this.my.userToken = user.userToken;
+          let user = JSON.parse(data)
+          console.log('加载my tab后', user)
+          this.my.nickname = user.userNickName
+          this.my.userLoginId = user.userLoginId
+          this.my.userToken = user.userToken
         },
         error => {
-          this.my.userLoginId = 0;
+          this.my.userLoginId = 0
         }
-      );
+      )
     },
     wxcSearchbarDepChooseClicked() {
       navigator.push({
-        url: getEntryUrl("views/city/index"),
-        animated: "true"
-      });
+        url: getEntryUrl('views/city/index'),
+        animated: 'true'
+      })
     },
     fetchMc(event) {
-      this.searchbarHttp();
+      this.searchbarHttp()
     },
     fetchDiscount(event) {
-      let _this = this;
-      getStorageVal("way:city").then(
+      let _this = this
+      getStorageVal('way:city').then(
         data => {
-          let city = JSON.parse(data);
-          _this.discountClientLng = city.lng;
-          _this.discountClientLat = city.lat;
-          _this.discountCityCode = city.cityCode;
-          _this.fetchDiscountHttp();
+          let city = JSON.parse(data)
+          _this.discountClientLng = city.lng
+          _this.discountClientLat = city.lat
+          _this.discountCityCode = city.cityCode
+          _this.fetchDiscountHttp()
         },
         e => {
           navigator.push({
-            url: getEntryUrl("views/city/index"),
-            animated: "true"
-          });
+            url: getEntryUrl('views/city/index'),
+            animated: 'true'
+          })
         }
-      );
+      )
     },
     fetchDiscountHttp() {
-      let _this = this;
+      let _this = this
       http({
-        method: "POST",
-        url: "/discount/query",
+        method: 'POST',
+        url: '/discount/query',
         headers: {},
         body: {
           //获取已经选择的地域信息
@@ -365,15 +363,15 @@ export default {
         data => {
           // console.log("success", data);
           if (data.code != 200) {
-            return;
+            return
           }
 
-          this.discountPageNum++;
+          this.discountPageNum++
 
-          let discountDataList = data.data;
+          let discountDataList = data.data
 
           for (let index = 0; index < discountDataList.length; index++) {
-            const discountData = discountDataList[index];
+            const discountData = discountDataList[index]
             let discountObj = {
               discountId: discountData.id,
               position: discountData.shopPosition,
@@ -385,24 +383,24 @@ export default {
               cExpireMills: discountData.limitTimeExpireMills,
               commodityImageUrl: discountData.commodityImageUrl,
               realUserLoginId: discountData.realUserLoginId
-            };
-            _this.discountList.push(discountObj);
+            }
+            _this.discountList.push(discountObj)
           }
 
-          _this.discountListNoDataShow = _this.discountList.length == 0;
+          _this.discountListNoDataShow = _this.discountList.length == 0
         },
         error => {
-          console.error("failure", error);
+          console.error('failure', error)
         }
-      );
+      )
     },
     logoutClicked(e) {
-      console.log("退出登录");
+      console.log('退出登录')
 
-      let _this = this;
+      let _this = this
       http({
-        method: "POST",
-        url: "/user/logout",
+        method: 'POST',
+        url: '/user/logout',
         headers: {
           token: this.my.userToken
         },
@@ -411,19 +409,19 @@ export default {
         }
       }).then(
         function(data) {
-          console.log("success", data);
+          console.log('success', data)
           if (data.code != 200) {
             modal.toast({
               message: data.msg,
               duration: 2
-            });
-            return;
+            })
+            return
           }
-          storage.removeItem("way:user", event => {});
+          storage.removeItem('way:user', event => {})
 
-          postMessage("way:tab:selectedIndex", 2);
-          _this.my.userLoginId = 0;
-          location.reload();
+          postMessage('way:tab:selectedIndex', 2)
+          _this.my.userLoginId = 0
+          location.reload()
           // navigator.pop({ animated: "true" });
           // navigator.push({
           //   url: getEntryUrl("views/user/login"),
@@ -431,78 +429,80 @@ export default {
           // });
         },
         function(error) {
-          console.error("failure", error);
+          console.error('failure', error)
         }
-      );
+      )
     },
     loginClicked(e) {
       navigator.push({
-        url: getEntryUrl("views/user/login", { tabIndex: 2 }),
-        animated: "true"
-      });
+        url: getEntryUrl('views/user/login', { tabIndex: 2 }),
+        animated: 'true'
+      })
     },
     discountCellClicked(i) {
-      let discount = this.discountList[i];
-      postMessage("way:discount:id", discount.discountId);
+      let discount = this.discountList[i]
+      postMessage('way:discount:id', discount.discountId)
       navigator.push({
-        url: getEntryUrl("views/discount/detail"),
-        animated: "true"
-      });
+        url: getEntryUrl('views/discount/detail', {
+          discountId: discount.discountId
+        }),
+        animated: 'true'
+      })
     },
     discountScrollToTop() {
-      const el = this.$refs.cell0[0];
-      dom.scrollToElement(el, {});
+      const el = this.$refs.cell0[0]
+      dom.scrollToElement(el, {})
     },
     discountCreate() {
-      getStorageVal("way:user").then(
+      getStorageVal('way:user').then(
         data => {
           navigator.push({
-            url: getEntryUrl("views/discount/create"),
-            animated: "true"
-          });
+            url: getEntryUrl('views/discount/create'),
+            animated: 'true'
+          })
         },
         error => {
           navigator.push({
-            url: getEntryUrl("views/user/login", { tabIndex: 1 }),
-            animated: "true"
-          });
+            url: getEntryUrl('views/user/login', { tabIndex: 1 }),
+            animated: 'true'
+          })
         }
-      );
+      )
     },
     discountScrollHandler(e) {
-      console.log(e.contentOffset.y);
+      console.log(e.contentOffset.y)
       if (e.contentOffset.y < -500) {
-        this.discountTopStyle.visibility = "visible";
+        this.discountTopStyle.visibility = 'visible'
       } else {
-        this.discountTopStyle.visibility = "hidden";
+        this.discountTopStyle.visibility = 'hidden'
       }
     },
     wxcSearchbarInputOnInput(e) {
-      this.main.keywords = e.value;
-      let _this = this;
-      getStorageVal("way:city").then(
+      this.main.keywords = e.value
+      let _this = this
+      getStorageVal('way:city').then(
         data => {
-          let city = JSON.parse(data);
-          _this.main.clientLng = city.lng;
-          _this.main.clientLat = city.lat;
-          _this.main.cityCode = city.cityCode;
-          _this.main.queryList.splice(0, _this.main.queryList.length);
-          _this.main.pageNum = 1;
-          _this.searchbarHttp();
+          let city = JSON.parse(data)
+          _this.main.clientLng = city.lng
+          _this.main.clientLat = city.lat
+          _this.main.cityCode = city.cityCode
+          _this.main.queryList.splice(0, _this.main.queryList.length)
+          _this.main.pageNum = 1
+          _this.searchbarHttp()
         },
         e => {
           navigator.push({
-            url: getEntryUrl("views/city/index"),
-            animated: "true"
-          });
+            url: getEntryUrl('views/city/index'),
+            animated: 'true'
+          })
         }
-      );
+      )
     },
     searchbarHttp() {
-      let _this = this;
+      let _this = this
       http({
-        method: "POST",
-        url: "/shop/query",
+        method: 'POST',
+        url: '/shop/query',
         headers: {},
         body: {
           keywords: this.main.keywords,
@@ -515,12 +515,12 @@ export default {
       }).then(
         function(data) {
           if (data.code != 200) {
-            return;
+            return
           }
 
-          let shopQueryDataList = data.data;
+          let shopQueryDataList = data.data
 
-          let shopIndex = 0;
+          let shopIndex = 0
           shopQueryDataList.forEach(shopQueryData => {
             //       {
             //   mName: "商家名称",
@@ -528,16 +528,16 @@ export default {
             //   cPrice: "1.8",
             //   mDistance: "652m"
             // }
-            let commodityData = shopQueryData.commodityList;
-            let cList = [];
+            let commodityData = shopQueryData.commodityList
+            let cList = []
             commodityData.forEach(commodity => {
               cList.push({
                 cId: commodity.id,
                 cName: commodity.name,
                 cPrice: commodity.price,
                 cImgUrl: commodity.imgUrl
-              });
-            });
+              })
+            })
 
             _this.main.queryList.push({
               shopIndex: shopIndex++,
@@ -548,50 +548,52 @@ export default {
               isMore: cList.length > 1 ? true : false,
               moreNum: cList.length > 1 ? cList.length - 1 : 0,
               mDistance: shopQueryData.shopDistance
-            });
-          });
+            })
+          })
 
-          _this.main.queryListNoDataShow = _this.main.queryList.length == 0;
+          _this.main.queryListNoDataShow = _this.main.queryList.length == 0
 
-          _this.main.pageNum++;
+          _this.main.pageNum++
         },
         function(error) {
-          console.error("failure", error);
+          console.error('failure', error)
         }
-      );
+      )
     },
     moreCommodityClicked(shopIndex) {
-      let shopItem = this.main.queryList[shopIndex];
-      console.log(shopIndex, shopItem);
-      shopItem.firstList = shopItem.firstList.concat(shopItem.moreList);
-      shopItem.isMore = !shopItem.isMore;
-      this.main.queryList[shopIndex] = shopItem;
+      let shopItem = this.main.queryList[shopIndex]
+      console.log(shopIndex, shopItem)
+      shopItem.firstList = shopItem.firstList.concat(shopItem.moreList)
+      shopItem.isMore = !shopItem.isMore
+      this.main.queryList[shopIndex] = shopItem
     },
     unMoreCommodityClicked(shopIndex) {
-      let shopItem = this.main.queryList[shopIndex];
-      console.log(shopIndex, shopItem);
-      shopItem.moreList = shopItem.firstList.slice(1);
-      shopItem.firstList = shopItem.firstList.slice(0, 1);
-      shopItem.isMore = !shopItem.isMore;
-      this.main.queryList[shopIndex] = shopItem;
+      let shopItem = this.main.queryList[shopIndex]
+      console.log(shopIndex, shopItem)
+      shopItem.moreList = shopItem.firstList.slice(1)
+      shopItem.firstList = shopItem.firstList.slice(0, 1)
+      shopItem.isMore = !shopItem.isMore
+      this.main.queryList[shopIndex] = shopItem
     },
     commodityCellClick(i, j) {
-      let shopItem = this.main.queryList[i];
-      console.log(i, j, shopItem);
-      let commodityItem = null;
+      let shopItem = this.main.queryList[i]
+      console.log(i, j, shopItem)
+      let commodityItem = null
       if (j === 0) {
-        commodityItem = shopItem.firstList[0];
+        commodityItem = shopItem.firstList[0]
       } else {
-        commodityItem = shopItem.moreList[j - 1];
+        commodityItem = shopItem.moreList[j - 1]
       }
-      console.log(commodityItem);
+      console.log(commodityItem)
       if (commodityItem) {
-        console.log("跳转到商品详情页面");
-        postMessage("way:commodity:id", commodityItem.cId);
+        console.log('跳转到商品详情页面')
+        // postMessage("way:commodity:id", commodityItem.cId);
         navigator.push({
-          url: getEntryUrl("views/commodity/detail"),
-          animated: "true"
-        });
+          url: getEntryUrl('views/commodity/detail', {
+            cid: commodityItem.cId
+          }),
+          animated: 'true'
+        })
       }
     },
     // discountExpireOnCompleted(i) {
@@ -600,25 +602,25 @@ export default {
     // },
     discountOnRefresh() {
       // this.refreshing = true;
-      console.log("refresh");
-      this.refreshText = "加载中";
+      console.log('refresh')
+      this.refreshText = '加载中'
 
-      this.discountPageNum = 1;
-      this.discountList.splice(0, this.discountList.length);
-      this.fetchDiscount();
+      this.discountPageNum = 1
+      this.discountList.splice(0, this.discountList.length)
+      this.fetchDiscount()
     },
     onpullingdown(event) {
-      this.refreshing = true;
-      this.refreshText = "下拉加载";
+      this.refreshing = true
+      this.refreshText = '下拉加载'
       console.log(
-        "pulling down",
+        'pulling down',
         event.pullingDistance,
         event.dy,
         event.viewHeight
-      );
+      )
     }
   }
-};
+}
 </script>
 
 <style scoped>

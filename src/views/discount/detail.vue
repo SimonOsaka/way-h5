@@ -90,7 +90,7 @@
     </wxc-mask>
 
     <wxc-mask height="100" :top="24" border-radius="0" duration="200" mask-bg-color="transparent" :has-animation="true" :has-overlay="true" :show-close="false" :show="weixinShow" @wxcMaskSetHidden="weixinMaskSetHidden">
-      <div style="flex-direction: column; align-items: flex-end; position: absolute; top: 25px; right: 25px;">
+      <div style="flex-direction: column; align-items: flex-end; position: absolute; top: 25px; right: 50px;">
         <text class="iconfont" style="font-size: 64px; color: #fff;">&#xe728;</text>
         <text class="iconfont" style="font-size: 48px;color: #fff;"> 请点击右上角的&#xe684;</text>
         <text style="color: #fff;font-size: 48px;">进行分享</text>
@@ -108,7 +108,7 @@ import {
   WxcCountdown,
   WxcMask,
   WxcNoticebar
-} from "weex-ui";
+} from 'weex-ui'
 import {
   getEntryUrl,
   receiveMessage,
@@ -118,12 +118,13 @@ import {
   getStorageVal,
   getUrlKey,
   setPageTitle,
+  setOgImage,
   setStorageVal
-} from "../../tools/utils.js";
-import { loadCateImageUrl } from "../../tools/image.js";
-import { http } from "../../tools/http.js";
-const navigator = weex.requireModule("navigator");
-const modal = weex.requireModule("modal");
+} from '../../tools/utils.js'
+import { loadCateImageUrl } from '../../tools/image.js'
+import { http } from '../../tools/http.js'
+const navigator = weex.requireModule('navigator')
+const modal = weex.requireModule('modal')
 
 export default {
   components: {
@@ -136,98 +137,89 @@ export default {
   },
   data: () => ({
     priceCellStyle: {
-      height: "106px",
-      backgroundColor: "#E61414",
-      paddingTop: "10px",
-      paddingBottom: "10px",
+      height: '106px',
+      backgroundColor: '#E61414',
+      paddingTop: '10px',
+      paddingBottom: '10px',
       paddingRight: 0
     },
-    cellStyle: { height: "auto" },
-    secondCellStyle: { paddingTop: "0" },
+    cellStyle: { height: 'auto' },
+    secondCellStyle: { paddingTop: '0' },
     discountObj: {
       id: 0,
-      cPicUrl: "",
-      cName: "",
-      cPrice: "",
-      position: "",
-      staticMapUrl: ""
+      cPicUrl: '',
+      cName: '',
+      cPrice: '',
+      position: '',
+      staticMapUrl: ''
     },
     discountReal: {
-      real: "",
-      unreal: "",
-      highlight: ""
+      real: '',
+      unreal: '',
+      highlight: ''
     },
     isAutoShow: false,
     show: false,
     realUserLoginId: 0,
-    realUserToken: "",
+    realUserToken: '',
     expiredShow: false,
     weixinShow: false
   }),
   beforeCreate() {
-    initIconfont();
-    setPageTitle("优惠详情");
+    initIconfont()
   },
   created() {
-    console.log("created in...");
-    getStorageVal("way:discount:id").then(
+    console.log('created in...')
+    this.discountObj.id = getUrlKey('discountId')
+    console.log('获取地址栏参数', this.discountObj.id)
+    if (!this.discountObj.id) {
+      navigator.pop()
+      return
+    }
+
+    setStorageVal('way:discount:id', this.discountObj.id)
+
+    getStorageVal('way:user').then(
       data => {
-        this.discountObj.id = data;
-        getStorageVal("way:user").then(
-          data => {
-            let user = JSON.parse(data);
-            this.realUserLoginId = user.userLoginId;
-            this.realUserToken = user.userToken;
-            console.log("realUserLoginId=", this.realUserLoginId);
-            this.discountDetailHttp();
-          },
-          error => {
-            this.discountDetailHttp();
-          }
-        );
+        let user = JSON.parse(data)
+        this.realUserLoginId = user.userLoginId
+        this.realUserToken = user.userToken
+        console.log('realUserLoginId=', this.realUserLoginId)
+        this.discountDetailHttp()
       },
-      e => {
-        this.discountObj.id = getUrlKey("discountId");
-        console.log("获取地址栏参数", this.discountObj.id);
-        if (!this.discountObj.id) {
-          navigator.pop();
-          return;
-        }
-
-        setStorageVal("way:discount:id", this.discountObj.id);
-
-        this.discountDetailHttp();
+      error => {
+        this.discountDetailHttp()
       }
-    );
-    console.log("created out...");
+    )
+    console.log('created out...')
   },
   methods: {
     popupOverlayAutoClick() {
-      this.isAutoShow = false;
+      this.isAutoShow = false
     },
     shareClicked() {
-      this.isAutoShow = true;
+      this.isAutoShow = true
     },
     weixinClicked() {
-      console.log("weixin clicked...");
-      let userAgent = window.navigator.userAgent;
-      if (userAgent.indexOf("MicroMessenger") != -1) {
-        this.weixinShow = true;
+      console.log('weixin clicked...')
+      let userAgent = window.navigator.userAgent
+      if (userAgent.indexOf('MicroMessenger') != -1) {
+        this.weixinShow = true
       } else {
-        this.show = true;
+        this.show = true
       }
     },
     wxcDialogConfirmBtnClicked() {
-      this.show = false;
+      this.show = false
     },
     discountDetailHttp() {
-      let _this = this;
-      console.log("realUserLoginId", this.realUserLoginId);
+      let _this = this
+      console.log('realUserLoginId', this.realUserLoginId)
       http({
-        method: "GET",
-        url: "/discount/getDetail",
+        method: 'GET',
+        url: '/discount/getDetail',
         headers: {
-          token: this.realUserToken || ""
+          token: this.realUserToken || ''
         },
         params: {
           discountId: this.discountObj.id,
@@ -235,78 +227,81 @@ export default {
         }
       }).then(
         function(data) {
-          console.log("success", data);
+          console.log('success', data)
           if (data.code != 200) {
             navigator.push({
-              url: getEntryUrl("404"),
+              url: getEntryUrl('404'),
               animated: true
-            });
-            return;
+            })
+            return
           }
-          let discountDetail = data.data;
-          _this.discountObj.id = discountDetail.id;
-          _this.discountObj.cName = discountDetail.commodityName;
+          let discountDetail = data.data
+          _this.discountObj.id = discountDetail.id
+          _this.discountObj.cName = discountDetail.commodityName
+
           if (discountDetail.commodityPrice >= 0) {
-            let strPrice = discountDetail.commodityPrice.toString();
-            let dotPos = strPrice.indexOf(".");
+            let strPrice = discountDetail.commodityPrice.toString()
+            let dotPos = strPrice.indexOf('.')
             if (dotPos != -1) {
-              _this.discountObj.lPrice = strPrice.slice(0, dotPos);
-              _this.discountObj.rPrice = strPrice.slice(dotPos);
+              _this.discountObj.lPrice = strPrice.slice(0, dotPos)
+              _this.discountObj.rPrice = strPrice.slice(dotPos)
             } else {
-              _this.discountObj.lPrice = strPrice;
-              console.log("商品价格", _this.discountObj.lPrice);
+              _this.discountObj.lPrice = strPrice
+              console.log('商品价格', _this.discountObj.lPrice)
             }
             // _this.discountObj.cPrice = discountDetail.commodityPrice;
           }
-          _this.discountObj.position = discountDetail.shopPosition;
-          _this.discountObj.cCate = discountDetail.commodityCate;
-          _this.discountObj.staticMapUrl = discountDetail.staticMapUrl;
-          _this.discountObj.shopLng = discountDetail.shopLng;
-          _this.discountObj.shopLat = discountDetail.shopLat;
-          _this.discountObj.commodityImageUrl =
-            discountDetail.commodityImageUrl;
-          _this.discountObj.cExpireMills = discountDetail.limitTimeExpireMills;
-          _this.discountObj.commodityReal = discountDetail.commodityReal;
-          _this.discountObj.commodityUnreal = discountDetail.commodityUnreal;
-          _this.discountObj.realType = discountDetail.realType;
+          _this.discountObj.position = discountDetail.shopPosition
+          _this.discountObj.cCate = discountDetail.commodityCate
+          _this.discountObj.staticMapUrl = discountDetail.staticMapUrl
+          _this.discountObj.shopLng = discountDetail.shopLng
+          _this.discountObj.shopLat = discountDetail.shopLat
+          _this.discountObj.commodityImageUrl = discountDetail.commodityImageUrl
+          _this.discountObj.cExpireMills = discountDetail.limitTimeExpireMills
+          _this.discountObj.commodityReal = discountDetail.commodityReal
+          _this.discountObj.commodityUnreal = discountDetail.commodityUnreal
+          _this.discountObj.realType = discountDetail.realType
           _this.discountReal = {
             real:
               discountDetail.commodityReal > 0
                 ? discountDetail.commodityReal
-                : "好评",
+                : '好评',
             unreal:
               discountDetail.commodityUnreal > 0
                 ? discountDetail.commodityUnreal
-                : "差评",
+                : '差评',
             highlight:
               discountDetail.realType == 0
-                ? "real"
-                : discountDetail.realType == 1 ? "unreal" : ""
-          };
+                ? 'real'
+                : discountDetail.realType == 1 ? 'unreal' : ''
+          }
+
+          setPageTitle(_this.discountObj.cName)
+          setOgImage(_this.discountObj.commodityImageUrl)
         },
         function(error) {
-          console.error("failure", error);
+          console.error('failure', error)
         }
-      );
+      )
     },
     increaseReal(operate, realType) {
-      let _this = this;
-      getStorageVal("way:user").then(
+      let _this = this
+      getStorageVal('way:user').then(
         data => {
-          let user = JSON.parse(data);
-          let realUserLoginId = user.userLoginId;
-          let userToken = user.userToken;
-          let discountId = _this.discountObj.id;
-          let url;
-          if (operate == "increase") {
-            url = "/discount/real/increase";
-          } else if (operate == "decrease") {
-            url = "/discount/real/decrease";
+          let user = JSON.parse(data)
+          let realUserLoginId = user.userLoginId
+          let userToken = user.userToken
+          let discountId = _this.discountObj.id
+          let url
+          if (operate == 'increase') {
+            url = '/discount/real/increase'
+          } else if (operate == 'decrease') {
+            url = '/discount/real/decrease'
           } else {
-            return;
+            return
           }
           http({
-            method: "POST",
+            method: 'POST',
             url: url,
             headers: {
               token: userToken
@@ -321,84 +316,84 @@ export default {
               modal.toast({
                 message: data.msg,
                 duration: 2
-              });
-              return;
+              })
+              return
             }
 
-            let discountRealItem = data.data;
+            let discountRealItem = data.data
             let realCount =
               discountRealItem.discountReal == 0
-                ? "好评"
-                : discountRealItem.discountReal;
+                ? '好评'
+                : discountRealItem.discountReal
 
             let unrealCount =
               discountRealItem.discountUnReal == 0
-                ? "差评"
-                : discountRealItem.discountUnReal;
+                ? '差评'
+                : discountRealItem.discountUnReal
 
             _this.discountReal = {
               real: realCount,
               unreal: unrealCount,
-              highlight: operate == "increase" ? realType : ""
-            };
-          });
+              highlight: operate == 'increase' ? realType : ''
+            }
+          })
         },
         error => {
           navigator.push({
-            url: getEntryUrl("views/user/login"),
+            url: getEntryUrl('views/user/login'),
             animated: true
-          });
+          })
         }
-      );
+      )
     },
     clickIncreaseReal() {
-      this.increaseReal("increase", "real");
+      this.increaseReal('increase', 'real')
     },
     clickDecreaseReal() {
-      this.increaseReal("decrease", "real");
+      this.increaseReal('decrease', 'real')
     },
     clickIncreaseUnreal() {
-      this.increaseReal("increase", "unreal");
+      this.increaseReal('increase', 'unreal')
     },
     clickDecreaseUnreal() {
-      this.increaseReal("decrease", "unreal");
+      this.increaseReal('decrease', 'unreal')
     },
     clickStaticMap() {
-      let dest = this.discountObj.shopLng + "," + this.discountObj.shopLat;
-      let destName = encodeURIComponent(this.discountObj.position);
-      getStorageVal("way:city").then(
+      let dest = this.discountObj.shopLng + ',' + this.discountObj.shopLat
+      let destName = encodeURIComponent(this.discountObj.position)
+      getStorageVal('way:city').then(
         data => {
-          let city = JSON.parse(data);
-          let start = city.lng + "," + city.lat;
+          let city = JSON.parse(data)
+          let start = city.lng + ',' + city.lat
 
           window.location.href =
-            "//m.amap.com/navi/?start=" +
+            '//m.amap.com/navi/?start=' +
             start +
-            "&dest=" +
+            '&dest=' +
             dest +
-            "&destName=" +
+            '&destName=' +
             destName +
-            "&naviBy=walk&key=e318d250a2b4d53d864f7d712cc069da";
+            '&naviBy=walk&key=e318d250a2b4d53d864f7d712cc069da'
         },
         err => {
           window.location.href =
-            "//m.amap.com/navi/?dest=" +
+            '//m.amap.com/navi/?dest=' +
             dest +
-            "&destName=" +
+            '&destName=' +
             destName +
-            "&key=e318d250a2b4d53d864f7d712cc069da";
+            '&key=e318d250a2b4d53d864f7d712cc069da'
         }
-      );
+      )
     },
     expiredOnCompleted() {
-      console.log("优惠已结束");
-      this.expiredShow = true;
+      console.log('优惠已结束')
+      this.expiredShow = true
     },
     weixinMaskSetHidden() {
-      this.weixinShow = false;
+      this.weixinShow = false
     }
   }
-};
+}
 </script>
 
 <style scoped>
