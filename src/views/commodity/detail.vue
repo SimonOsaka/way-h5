@@ -47,11 +47,19 @@
     </wxc-popup>
 
     <wxc-dialog title="功能开发中" content="请使用当前App的微信分享功能" :show="show" :single="true" @wxcDialogConfirmBtnClicked="wxcDialogConfirmBtnClicked"></wxc-dialog>
+
+    <wxc-mask height="100" :top="24" border-radius="0" duration="200" mask-bg-color="transparent" :has-animation="true" :has-overlay="true" :show-close="false" :show="weixinShow" @wxcMaskSetHidden="weixinMaskSetHidden">
+      <div style="flex-direction: column; align-items: flex-end; position: absolute; top: 25px; right: 50px;">
+        <text class="iconfont" style="font-size: 64px; color: #fff;">&#xe728;</text>
+        <text class="iconfont" style="font-size: 48px;color: #fff;"> 请点击右上角的&#xe684;</text>
+        <text style="color: #fff;font-size: 48px;">进行分享</text>
+      </div>
+    </wxc-mask>
   </div>
 </template>
 
 <script>
-import { Utils, WxcCell, WxcPopup, WxcDialog } from 'weex-ui'
+import { Utils, WxcCell, WxcPopup, WxcDialog, WxcMask } from 'weex-ui'
 import {
   getEntryUrl,
   receiveMessage,
@@ -70,7 +78,7 @@ const navigator = weex.requireModule('navigator')
 const modal = weex.requireModule('modal')
 
 export default {
-  components: { WxcCell, WxcPopup, WxcDialog },
+  components: { WxcCell, WxcPopup, WxcDialog, WxcMask },
   data: () => ({
     cellStyle: { height: 'auto' },
     commodityObj: {
@@ -84,7 +92,8 @@ export default {
       shopLogoUrl: ''
     },
     isAutoShow: false,
-    show: false
+    show: false,
+    weixinShow: false
   }),
   beforeCreate() {
     initIconfont()
@@ -140,7 +149,12 @@ export default {
     },
     weixinClicked() {
       console.log('weixin clicked...')
-      this.show = true
+      let userAgent = window.navigator.userAgent
+      if (userAgent.indexOf('MicroMessenger') != -1) {
+        this.weixinShow = true
+      } else {
+        this.show = true
+      }
     },
     wxcDialogConfirmBtnClicked() {
       this.show = false
@@ -151,6 +165,9 @@ export default {
         url: getEntryUrl('views/shop/detail'),
         animated: 'true'
       })
+    },
+    weixinMaskSetHidden() {
+      this.weixinShow = false
     }
   }
 }
