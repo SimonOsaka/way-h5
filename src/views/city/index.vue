@@ -17,48 +17,53 @@
 </template>
 
 <script>
-import { WxcSearchbar, WxcCell } from "weex-ui";
-import { postMessage, getStorageVal, setPageTitle } from "../../tools/utils.js";
-import { http } from "../../tools/http.js";
-import category from "../../components/category.vue";
-const navigator = weex.requireModule("navigator");
+import { WxcSearchbar, WxcCell } from 'weex-ui'
+import {
+  postMessage,
+  getStorageVal,
+  setPageTitle,
+  getEntryUrl
+} from '../../tools/utils.js'
+import { http } from '../../tools/http.js'
+import category from '../../components/category.vue'
+const navigator = weex.requireModule('navigator')
 
 export default {
   components: { WxcSearchbar, WxcCell, category },
   data: () => ({
     searchList: [],
-    keywords: "",
+    keywords: '',
     alwaysShowCancel: false,
-    returnKeyType: "done",
+    returnKeyType: 'done',
     inputTimeout: null,
-    currentAddress: "",
+    currentAddress: '',
     city: {}
   }),
   beforeCreate() {
-    setPageTitle("选择城市");
+    setPageTitle('选择城市')
   },
   methods: {
     wxcIndexlistItemClicked(i) {
-      console.log(i);
-      let rs = this.searchList[i];
-      this.city = { name: rs.addressTitle };
-      this.regeo(rs.addressLocation);
+      console.log(i)
+      let rs = this.searchList[i]
+      this.city = { name: rs.addressTitle }
+      this.regeo(rs.addressLocation)
     },
     wxcSearchbarInputOnInput(e) {
-      this.keywords = e.value;
+      this.keywords = e.value
       if (this.inputTimeout) {
-        clearTimeout(this.inputTimeout);
+        clearTimeout(this.inputTimeout)
       }
-      let _this = this;
+      let _this = this
       this.inputTimeout = setTimeout(() => {
-        this.inputTipsFetch();
-      }, 500);
+        this.inputTipsFetch()
+      }, 500)
     },
     inputTipsFetch() {
-      let _this = this;
+      let _this = this
       http({
-        method: "POST",
-        url: "/amap/inputtips",
+        method: 'POST',
+        url: '/amap/inputtips',
         headers: {},
         body: {
           keywords: this.keywords
@@ -66,28 +71,28 @@ export default {
       }).then(
         function(data) {
           if (data.code != 200) {
-            return;
+            return
           }
-          _this.searchList.splice(0, _this.searchList.length);
-          let inputTipsList = data.data;
+          _this.searchList.splice(0, _this.searchList.length)
+          let inputTipsList = data.data
           inputTipsList.forEach(tip => {
             _this.searchList.push({
               addressTitle: tip.name,
               addressDesc: tip.district + tip.address,
               addressLocation: tip.location
-            });
-          });
+            })
+          })
         },
         function(error) {
-          console.error("failure", error);
+          console.error('failure', error)
         }
-      );
+      )
     },
     regeo(location) {
-      let _this = this;
+      let _this = this
       http({
-        method: "POST",
-        url: "/amap/regeo",
+        method: 'POST',
+        url: '/amap/regeo',
         headers: {},
         body: {
           location: location
@@ -95,37 +100,38 @@ export default {
       }).then(
         function(data) {
           if (data.code != 200) {
-            return;
+            return
           }
 
-          let regeoData = data.data;
-          let cityCode = regeoData.cityCode;
+          let regeoData = data.data
+          let cityCode = regeoData.cityCode
 
-          let loc = location.split(",");
+          let loc = location.split(',')
 
-          _this.city.lng = loc[0];
-          _this.city.lat = loc[1];
-          _this.city.cityCode = cityCode;
-          postMessage("way:city", JSON.stringify(_this.city));
-          navigator.pop({
-            animated: "true"
-          });
+          _this.city.lng = loc[0]
+          _this.city.lat = loc[1]
+          _this.city.cityCode = cityCode
+          postMessage('way:city', JSON.stringify(_this.city))
+          navigator.push({
+            url: getEntryUrl('index'),
+            animated: 'true'
+          })
         },
         function(error) {
-          console.error("failure", error);
+          console.error('failure', error)
         }
-      );
+      )
     }
   },
   created() {
-    let _this = this;
-    getStorageVal("way:city").then(
+    let _this = this
+    getStorageVal('way:city').then(
       data => {
-        let city = JSON.parse(data);
-        _this.currentAddress = city.name;
+        let city = JSON.parse(data)
+        _this.currentAddress = city.name
       },
       error => {}
-    );
+    )
   }
-};
+}
 </script>
