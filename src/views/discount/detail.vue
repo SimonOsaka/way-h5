@@ -59,8 +59,8 @@
       <div>
         <wxc-cell :has-arrow="false" :has-bottom-border="true">
           <div slot="label" style="flex-direction:row;">
-            <text class="iconfont" style="margin-top:6px;">&#xe651;</text>
-            <text>{{discountObj.position}}</text>
+            <text class="iconfont" style="margin-top:6px; color: red;">&#xe651;</text>
+            <text style="width: 650px;">{{discountObj.position}}</text>
           </div>
         </wxc-cell>
       </div>

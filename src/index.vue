@@ -43,19 +43,18 @@
           <wxc-cell @wxcCellClicked="discountCellClicked(i)" :has-arrow="false" :cell-style="cellStyle" :has-top-border="false" :has-bottom-border="false" :has-margin="false" :auto-accessible="false">
             <image slot="label" class="image" resize="cover" :src="discountObj.commodityImageUrl"></image>
             <div slot="title">
-              <div style="flex-direction: row; height: 50px;">
+              <div style="flex-direction: row; height: auto;">
                 <text class="c_name" style="width: 480px;">{{discountObj.cName}}</text>
                 <div style="flex: 1 1 0%; -webkit-box-flex: 1;">
                   <text style="text-align: right; font-size: 26px; padding-top: 5px;">{{discountObj.mDistance}}</text>
                 </div>
               </div>
               <div style="flex-direction:row;">
-                <text class="c_name c_money" style="font-size:20px; padding-top:4px;">¥</text>
-                <text class="c_money">{{discountObj.cPrice}}</text>
+                <text class="c_name c_money" style="padding-top:4px;">¥{{discountObj.cPrice}}</text>
               </div>
-              <div :key="i" :index="i" style="flex-direction: row; padding-left: 20px; margin-top: 10px;">
-                  <text class="iconfont red">&#xe651;</text>
-                  <text class="c_real" style="color: #ccc;">{{discountObj.position}}</text>
+              <div :key="i" :index="i" style="flex-direction: row; height: auto; padding-left: 20px; margin-top: 10px;">
+                  <text class="iconfont red" style="font-size: 24px;">&#xe651;</text>
+                  <text class="c_real" style="color: #ccc; width: 500px;">{{discountObj.position}}</text>
               </div>
             </div>
           </wxc-cell>
