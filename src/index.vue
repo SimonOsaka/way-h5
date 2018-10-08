@@ -14,10 +14,12 @@
             <image slot="label" class="image" resize="cover" :src="cItem.cImgUrl"></image>
             <div slot="title">
               <text class="c_name">{{cItem.cName}}</text>
+              <!--
               <div style="flex-direction:row;">
                 <text class="c_name c_money" style="font-size:20px; padding-top: 3px;">¥</text>
                 <text class="c_money">{{cItem.cPrice}}</text>
               </div>
+              -->
             </div>
           </wxc-cell>
           <wxc-cell v-if="commodityObj.moreList.length > 0" :has-arrow="false" :has-top-border="false" :has-bottom-border="true" :has-margin="false" :auto-accessible="false">
@@ -533,7 +535,7 @@ export default {
               cList.push({
                 cId: commodity.id,
                 cName: commodity.name,
-                cPrice: commodity.price,
+                // cPrice: commodity.price,
                 cImgUrl: commodity.imgUrl
               })
             })

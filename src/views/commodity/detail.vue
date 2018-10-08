@@ -6,17 +6,19 @@
       </div>
       <div style="margin-top: 10px;">
         <wxc-cell :has-arrow="false" :has-bottom-border="true" :cell-style="cellStyle">
-          <div slot="label" style="height: 150px;">
+          <div slot="label">
             <div style="flex-direction: row;">
               <text style="width: 600px;">{{commodityObj.cName}}</text>
             </div>
+            <!--
             <div style="flex-direction:row; margin-top: 10px;">
               <text class="c_money" style="font-size:20px; padding-top:10px;">¥</text>
               <text class="c_money">{{commodityObj.cPrice}}</text>
             </div>
+            -->
           </div>
-          <div slot="value" style="flex-direction: row; width: 110px; height: 150px;">
-            <div style="position: absolute; top: 0;" @click="popupOverlayClicked">
+          <div slot="value" style="flex-direction: row; width: 110px;">
+            <div @click="popupOverlayClicked">
               <text class="iconfont">&#xe6f3; 分享</text>
               <text></text>
             </div>
@@ -24,10 +26,10 @@
         </wxc-cell>
       </div>
       <div>
-        <wxc-cell :has-arrow="false" :has-bottom-border="true">
+        <wxc-cell :has-arrow="false" :has-bottom-border="true" :cell-style="cellStyle">
           <div slot="label" style="flex-direction:row;">
-            <text class="iconfont" style="margin-top:6px;">&#xe651;</text>
-            <text>{{commodityObj.cPosition}}</text>
+            <text class="iconfont" style="margin-top:6px; color: red;">&#xe651;</text>
+            <text style="width: 700px;">{{commodityObj.cPosition}}</text>
           </div>
         </wxc-cell>
       </div>
@@ -125,7 +127,7 @@ export default {
         let commodityDetail = data.data
         _this.commodityObj.id = commodityDetail.id
         _this.commodityObj.cName = commodityDetail.name
-        _this.commodityObj.cPrice = commodityDetail.price
+        // _this.commodityObj.cPrice = commodityDetail.price
         _this.commodityObj.cPosition = commodityDetail.shopAddress
         _this.commodityObj.cPicUrl = commodityDetail.imgUrl
         _this.commodityObj.shopId = commodityDetail.shopId
