@@ -74,13 +74,17 @@
     <div class="item-container" :style="contentStyle">
       <scroller :style="myScrollerStyle">
         <wxc-cell v-if="my.userLoginId != 0" :has-arrow="false" :cell-style="cellStyle" :has-top-border="false" :has-bottom-border="true" :has-margin="false" :auto-accessible="false">
-          <image slot="label" class="image avatar" src="data:image/png;base64,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"></image>
+          <image slot="label" class="image avatar" src="http://static.duozouzou.top/user.png"></image>
           <div slot="title">
             <div style="flex-direction: row;">
               <text class="c_name">{{my.nickname}}</text>
             </div>
           </div>
         </wxc-cell>
+
+        <wxc-cell v-if="my.userLoginId != 0" title="我发布的优惠信息"
+                  @wxcCellClicked="userDiscountClick"
+                  :has-top-border="true" :has-arrow="true"></wxc-cell>
 
         <wxc-cell v-else :has-arrow="false" :cell-style="cellStyle" :has-top-border="false" :has-bottom-border="true" :has-margin="false" :auto-accessible="false">
           <div slot="title">
@@ -619,6 +623,12 @@ export default {
         event.dy,
         event.viewHeight
       )
+    },
+    userDiscountClick() {
+      navigator.push({
+        url: getEntryUrl('views/user/myDiscount'),
+        animated: 'true'
+      })
     }
   }
 }
