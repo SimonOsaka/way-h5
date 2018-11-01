@@ -80,7 +80,7 @@
       </div>
     </wxc-popup>
 
-    <wxc-dialog title="功能开发中" content="请使用当前App的微信分享功能" :show="show" :single="true" @wxcDialogConfirmBtnClicked="wxcDialogConfirmBtnClicked"></wxc-dialog>
+    <wxc-dialog title="微信分享" content="请使用浏览器下方的微信分享功能" :show="show" :single="true" @wxcDialogConfirmBtnClicked="wxcDialogConfirmBtnClicked"></wxc-dialog>
 
     <wxc-mask height="80" width="240" border-radius="5" duration="200" mask-bg-color="#FFFFFF" :has-animation="false" :has-overlay="true" :show-close="false" :show="expiredShow">
       <div style="flex-direction: row; justify-content: center; align-items: center; padding-top: 5px;">
