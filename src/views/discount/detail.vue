@@ -33,19 +33,19 @@
             </div>
           </div>
           <div slot="value" style="flex-direction: row;">
-            <div style="flex-direction: column; margin-left: 10px;" v-if="discountReal.highlight == 'real'" @click="clickDecreaseReal()">
+            <div style="flex-direction: column; margin-left: 10px;" v-if="discountReal.highlight == 'real'">
               <text class="iconfont" style="font-size: 42px; color: #E61414;">&#xe7f2;</text>
               <text style="font-size: 22px; color: #E61414; text-align: center;">{{discountReal.real}}</text>
             </div>
-            <div style="flex-direction: column; margin-left: 10px;" v-else @click="clickIncreaseReal()">
+            <div style="flex-direction: column; margin-left: 10px;" v-else>
               <text class="iconfont" style="font-size: 42px;">&#xe7f2;</text>
               <text style="font-size: 22px; text-align: center;">{{discountReal.real}}</text>
             </div>
-            <div style="flex-direction: column; margin-left: 50px;" v-if="discountReal.highlight == 'unreal'" @click="clickDecreaseUnreal()">
+            <div style="flex-direction: column; margin-left: 50px;" v-if="discountReal.highlight == 'unreal'">
               <text class="iconfont" style="font-size: 42px; color: #E61414;">&#xe846;</text>
               <text style="font-size: 22px; color: #E61414; text-align: center;">{{discountReal.unreal}}</text>
             </div>
-            <div style="flex-direction: column; margin-left: 50px;" v-else @click="clickIncreaseUnreal()">
+            <div style="flex-direction: column; margin-left: 50px;" v-else>
               <text class="iconfont" style="font-size: 42px;">&#xe846;</text>
               <text style="font-size: 22px; text-align: center;">{{discountReal.unreal}}</text>
             </div>
