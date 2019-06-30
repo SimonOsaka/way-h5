@@ -34,9 +34,9 @@ const generateMultipleEntrys = (entry) => {
       isDevServer: true,
       chunksSortMode: 'dependency',
       inject: true,
-      chunks: [name],
+      chunks: [name]//,
       // production
-      minimize: true
+      // minimize: true
     })
   })
   return htmlPlugin;
