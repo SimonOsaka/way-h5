@@ -67,7 +67,7 @@
         <text style="font-size:32px; margin-top: 20px; text-align: center; color: #cccccc;"> 没有查询到结果 </text>
       </div>
       <div style="flex-direction: column; position: absolute; right: 16px; bottom: 16px;">
-        <text class="iconfont" :style="addDiscountStyle" @click="discountCreate">&#xe649;</text>
+        <!-- <text class="iconfont" :style="addDiscountStyle" @click="discountCreate">&#xe649;</text> -->
         <text class="iconfont" :style="discountTopStyle" @click="discountScrollToTop">&#xe69e;</text>
       </div>
     </div>
