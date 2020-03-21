@@ -11,14 +11,14 @@ export function http(OPTIONS = {}) {
 
   let apiRoot
   if (platform === 'web') {
-    apiRoot = 'http://api.jicu.vip'; //window.location.origin.replace(':8081', '')
+    apiRoot = 'https://api.jicu.vip'; //window.location.origin.replace(':8081', '')
   } else {
     if (process.env === 'test') {
       // 测试环境域名
       apiRoot = window.location.origin.replace(':8081', '') //'http://your.dev.domain.com'
     } else {
       // 正式环境域名
-      apiRoot = 'http://api.jicu.vip'; //'http://your.prod.domain.com'
+      apiRoot = 'https://api.jicu.vip'; //'http://your.prod.domain.com'
     }
   }
 
